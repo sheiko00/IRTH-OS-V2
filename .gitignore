@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+dist/
+.next/
+out/
+build/
+
+# Environment
+.env
+.env.local
+.env.production
+.env.staging
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Prisma
+prisma/migrations/**/migration_lock.toml
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+*.log
+npm-debug.log*
+
+# Coverage
+coverage/
+
+# Misc
+*.tsbuildinfo
