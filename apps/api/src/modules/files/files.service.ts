@@ -1,11 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { StorageService } from '../storage/storage.service';
 import { AssetType } from '@prisma/client';
 import slugify from 'slugify';
 
 @Injectable()
 export class FilesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private storage: StorageService,
+  ) {}
 
   // ─── ASSETS ───────────────────────────────────
   async findAll(params: { page?: number; limit?: number; folderId?: string; type?: AssetType }) {
@@ -29,7 +33,37 @@ export class FilesService {
     return { data: assets, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
-  async createAsset(data: {
+  async uploadAndCreateAsset(
+    file: Express.Multer.File,
+    uploadedById: string,
+    folderId?: string,
+    tags?: string[],
+  ) {
+    // Determine asset type from MIME
+    let type: AssetType = 'DOCUMENT';
+    if (file.mimetype.startsWith('image/')) type = 'IMAGE';
+    else if (file.mimetype.startsWith('video/')) type = 'VIDEO';
+
+    // Upload to GCS
+    const uploaded = await this.storage.uploadFile(file, `assets/${type.toLowerCase()}`);
+
+    // Save to DB
+    return this.prisma.asset.create({
+      data: {
+        name: file.originalname,
+        fileUrl: uploaded.url,
+        type,
+        mimeType: uploaded.mimeType,
+        size: uploaded.size,
+        folderId,
+        tags: tags || [],
+        uploadedById,
+      },
+      include: { folder: true },
+    });
+  }
+
+  async createAssetFromUrl(data: {
     name: string; fileUrl: string; type: AssetType;
     mimeType?: string; size?: number; folderId?: string; tags?: string[];
   }, uploadedById: string) {
@@ -42,7 +76,10 @@ export class FilesService {
   async deleteAsset(id: string) {
     const asset = await this.prisma.asset.findUnique({ where: { id } });
     if (!asset) throw new NotFoundException('Asset not found');
-    // TODO: Delete from storage (R2/GCS)
+
+    // Delete from GCS
+    await this.storage.deleteFile(asset.fileUrl);
+
     return this.prisma.asset.delete({ where: { id } });
   }
 

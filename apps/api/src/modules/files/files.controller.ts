@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Delete, Param, Body, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, Query, UseGuards, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
@@ -24,8 +25,24 @@ export class FilesController {
   @Post('upload')
   @UseGuards(PermissionsGuard)
   @RequirePermission('UPLOAD_FILES')
-  upload(@Body() data: any, @CurrentUser('sub') userId: string) {
-    return this.filesService.createAsset(data, userId);
+  @UseInterceptors(FileInterceptor('file', {
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  }))
+  upload(
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser('sub') userId: string,
+    @Body('folderId') folderId?: string,
+    @Body('tags') tags?: string,
+  ) {
+    const tagArray = tags ? tags.split(',').map(t => t.trim()) : [];
+    return this.filesService.uploadAndCreateAsset(file, userId, folderId, tagArray);
+  }
+
+  @Post('upload-url')
+  @UseGuards(PermissionsGuard)
+  @RequirePermission('UPLOAD_FILES')
+  uploadFromUrl(@Body() data: any, @CurrentUser('sub') userId: string) {
+    return this.filesService.createAssetFromUrl(data, userId);
   }
 
   @Delete(':id')

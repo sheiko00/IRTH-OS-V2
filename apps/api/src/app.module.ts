@@ -16,6 +16,7 @@ import { MarketingModule } from './modules/marketing/marketing.module';
 import { FilesModule } from './modules/files/files.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { StorageModule } from './modules/storage/storage.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 
     // Core
     PrismaModule,
+    StorageModule,
 
     // Feature modules
     AuthModule,
