@@ -1,9 +1,13 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  // Use 'standalone' for Docker, remove for Vercel
+  ...(process.env.DOCKER_BUILD === 'true' ? { output: 'standalone' as const } : {}),
   images: {
-    domains: ['localhost', 'storage.googleapis.com'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'storage.googleapis.com' },
+      { protocol: 'https', hostname: '*.supabase.co' },
+    ],
   },
   async rewrites() {
     return [

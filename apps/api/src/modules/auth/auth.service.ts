@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
+import { EmailService } from '../email/email.service';
 import { LoginDto, RegisterDto, RefreshTokenDto } from './dto/auth.dto';
 
 @Injectable()
@@ -11,6 +12,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private emailService: EmailService,
   ) {}
 
   // ─── ADMIN AUTH ────────────────────────────────
@@ -151,6 +153,10 @@ export class AuthService {
     });
 
     await this.updateRefreshToken(customer.id, tokens.refreshToken, 'customer');
+
+    // Send welcome email
+    this.emailService.sendWelcomeEmail(customer.email, customer.name).catch(() => {});
+
     return {
       ...tokens,
       customer: {

@@ -1,10 +1,18 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { EmailService } from '../email/email.service';
 import { OrderStatus, Prisma } from '@prisma/client';
 
 @Injectable()
 export class OrdersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private emailService: EmailService,
+  ) {}
+
+  private generateOrderNumber(): string {
+    return `IRTH-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+  }
 
   async findAll(params: {
     page?: number;
@@ -85,9 +93,8 @@ export class OrdersService {
     promoCodeId?: string;
     items: { productId: string; variantId: string; quantity: number; price: number }[];
   }, createdById: string) {
-    // Generate order number
-    const count = await this.prisma.order.count();
-    const orderNumber = `IRTH-${String(count + 1).padStart(6, '0')}`;
+    // Generate unique order number using timestamp + random suffix (race-condition free)
+    const orderNumber = `IRTH-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
     // Calculate totals
     const subtotal = data.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -160,6 +167,16 @@ export class OrdersService {
       });
     }
 
+    // Send confirmation email
+    if (data.customerEmail) {
+      this.emailService.sendOrderConfirmation(data.customerEmail, {
+        orderNumber,
+        customerName: data.customerName,
+        items: order.items.map((i: any) => ({ name: i.product.name, quantity: i.quantity, price: i.price })),
+        total,
+      }).catch(() => {}); // fire & forget
+    }
+
     return order;
   }
 
@@ -184,7 +201,7 @@ export class OrdersService {
       throw new BadRequestException(`Cannot transition from ${order.status} to ${status}`);
     }
 
-    // If cancelled or returned, restore stock
+// If cancelled or returned, restore stock
     if (['CANCELLED', 'RETURNED'].includes(status)) {
       const items = await this.prisma.orderItem.findMany({ where: { orderId } });
       for (const item of items) {
@@ -195,7 +212,7 @@ export class OrdersService {
       }
     }
 
-    return this.prisma.order.update({
+    const updated = await this.prisma.order.update({
       where: { id: orderId },
       data: {
         status,
@@ -210,6 +227,17 @@ export class OrdersService {
       },
       include: { statusHistory: { orderBy: { createdAt: 'desc' } } },
     });
+
+    // Send status update email
+    if (order.customerEmail) {
+      this.emailService.sendOrderStatusUpdate(order.customerEmail, {
+        orderNumber: order.orderNumber,
+        customerName: order.customerName,
+        status,
+      }).catch(() => {}); // fire & forget
+    }
+
+    return updated;
   }
 
   async addNote(orderId: string, authorId: string, content: string) {

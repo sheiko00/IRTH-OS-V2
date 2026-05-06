@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
 import { RequirePermission } from '../../common/decorators/permissions.decorator';
 import { ProductStatus } from '@prisma/client';
+import { CreateProductDto, UpdateProductDto, CreateCategoryDto } from './dto';
 
 @Controller('products')
 export class ProductsController {
@@ -37,14 +38,14 @@ export class ProductsController {
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermission('CREATE_PRODUCT')
-  create(@Body() data: any) {
+  create(@Body() data: CreateProductDto) {
     return this.productsService.create(data);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermission('EDIT_PRODUCT')
-  update(@Param('id') id: string, @Body() data: any) {
+  update(@Param('id') id: string, @Body() data: UpdateProductDto) {
     return this.productsService.update(id, data);
   }
 
@@ -81,14 +82,14 @@ export class ProductsController {
   @Post('categories')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermission('CREATE_PRODUCT')
-  createCategory(@Body() data: any) {
+  createCategory(@Body() data: CreateCategoryDto) {
     return this.productsService.createCategory(data);
   }
 
   @Patch('categories/:id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermission('EDIT_PRODUCT')
-  updateCategory(@Param('id') id: string, @Body() data: any) {
+  updateCategory(@Param('id') id: string, @Body() data: Partial<CreateCategoryDto>) {
     return this.productsService.updateCategory(id, data);
   }
 

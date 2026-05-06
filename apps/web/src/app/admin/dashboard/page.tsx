@@ -6,6 +6,16 @@ import {
   TrendingDown, AlertTriangle, ArrowUpRight, Clock, Truck
 } from 'lucide-react';
 import { cn, formatCurrency, getStatusColor } from '@/lib/utils';
+import { api } from '@/lib/api';
+
+interface Order {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  total: number;
+  status: string;
+  createdAt: string;
+}
 
 interface DashboardData {
   orders: { total: number; thisMonth: number; lastMonth: number; pending: number };
@@ -41,19 +51,43 @@ function KPICard({ title, value, subtitle, icon: Icon, trend, color }: {
 
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
+  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Mock data for demo (replace with API call)
-    setTimeout(() => {
-      setData({
-        orders: { total: 1247, thisMonth: 89, lastMonth: 76, pending: 12 },
-        revenue: { total: 456780, thisMonth: 34560 },
-        customers: { total: 3420, newThisMonth: 145 },
-        products: { total: 64, active: 52, lowStock: 7 },
-      });
-      setLoading(false);
-    }, 500);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        
+        // Fetch dashboard analytics
+        const analytics = await api.getAnalyticsOverview(token || '');
+        
+        // Fetch recent orders
+        const ordersRes = await api.getOrders(token || '', 'limit=5');
+        const orders = ordersRes.data || [];
+        
+        setData({
+          orders: { 
+            total: analytics.orders?.total || 0, 
+            thisMonth: analytics.orders?.thisMonth || 0,
+            lastMonth: analytics.orders?.lastMonth || 0, 
+            pending: analytics.orders?.pending || 0 
+          },
+          revenue: { total: analytics.revenue?.total || 0, thisMonth: analytics.revenue?.thisMonth || 0 },
+          customers: { total: analytics.customers?.total || 0, newThisMonth: analytics.customers?.newThisMonth || 0 },
+          products: { total: analytics.products?.total || 0, active: analytics.products?.active || 0, lowStock: analytics.products?.lowStock || 0 },
+        });
+        setRecentOrders(orders);
+      } catch (err: any) {
+        setError(err.message || 'Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
   }, []);
 
   if (loading) {
@@ -126,31 +160,30 @@ export default function DashboardPage() {
             </a>
           </div>
           <div className="space-y-3">
-            {[
-              { id: 'IRTH-000089', customer: 'Nour Ahmed', amount: 1250, status: 'SHIPPED', time: '2 hours ago' },
-              { id: 'IRTH-000088', customer: 'Sara Hassan', amount: 890, status: 'PROCESSING', time: '4 hours ago' },
-              { id: 'IRTH-000087', customer: 'Mohamed Ali', amount: 2100, status: 'PENDING', time: '6 hours ago' },
-              { id: 'IRTH-000086', customer: 'Fatima Omar', amount: 650, status: 'DELIVERED', time: '1 day ago' },
-              { id: 'IRTH-000085', customer: 'Ahmed Khaled', amount: 1800, status: 'CONFIRMED', time: '1 day ago' },
-            ].map((order) => (
+            {recentOrders.length > 0 ? recentOrders.map((order) => (
               <div key={order.id} className="flex items-center justify-between py-3 border-b border-border/50 last:border-0">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
                     <ShoppingCart className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium">{order.id}</p>
-                    <p className="text-xs text-muted-foreground">{order.customer}</p>
+                    <p className="text-sm font-medium">{order.orderNumber}</p>
+                    <p className="text-xs text-muted-foreground">{order.customerName}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold">{formatCurrency(order.amount)}</p>
+                  <p className="text-sm font-semibold">{formatCurrency(order.total)}</p>
                   <span className={cn('inline-block px-2 py-0.5 rounded-full text-[10px] font-medium border', getStatusColor(order.status))}>
-                    {order.status}
+                    {order.status.replace('_', ' ')}
                   </span>
                 </div>
               </div>
-            ))}
+            )) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <ShoppingCart className="w-10 h-10 mx-auto mb-3 opacity-50" />
+                <p className="text-sm">No recent orders</p>
+              </div>
+            )}
           </div>
         </div>
 

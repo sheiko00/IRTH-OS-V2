@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, Filter, Eye, ShoppingCart, Clock, Truck, CheckCircle2, XCircle, ArrowUpRight } from 'lucide-react';
 import { cn, formatCurrency, formatDateTime, getStatusColor } from '@/lib/utils';
+import { api } from '@/lib/api';
 
 interface Order {
   id: string;
@@ -27,19 +28,23 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      setOrders([
-        { id: '1', orderNumber: 'IRTH-000089', customerName: 'Nour Ahmed', customerPhone: '+201012345678', subtotal: 1350, discount: 100, total: 1250, status: 'SHIPPED', paymentMethod: 'COD', createdAt: '2026-05-05T14:30:00Z', items: [{ id: '1', quantity: 2, product: { name: 'Radiance Serum' } }], createdBy: { name: 'IRTH Admin' } },
-        { id: '2', orderNumber: 'IRTH-000088', customerName: 'Sara Hassan', subtotal: 890, discount: 0, total: 890, status: 'PROCESSING', paymentMethod: 'Card', createdAt: '2026-05-05T10:15:00Z', items: [{ id: '2', quantity: 1, product: { name: 'Hydra Moisturizer' } }, { id: '3', quantity: 1, product: { name: 'Vitamin C Toner' } }], createdBy: { name: 'IRTH Admin' } },
-        { id: '3', orderNumber: 'IRTH-000087', customerName: 'Mohamed Ali', customerPhone: '+201098765432', subtotal: 2100, discount: 0, total: 2100, status: 'PENDING', paymentMethod: 'COD', createdAt: '2026-05-04T18:00:00Z', items: [{ id: '4', quantity: 3, product: { name: 'Radiance Serum' } }] },
-        { id: '4', orderNumber: 'IRTH-000086', customerName: 'Fatima Omar', subtotal: 650, discount: 50, total: 600, status: 'DELIVERED', paymentMethod: 'Card', createdAt: '2026-05-03T09:30:00Z', items: [{ id: '5', quantity: 1, product: { name: 'Deep Cleansing Gel' } }] },
-        { id: '5', orderNumber: 'IRTH-000085', customerName: 'Ahmed Khaled', subtotal: 1800, discount: 0, total: 1800, status: 'CONFIRMED', paymentMethod: 'COD', createdAt: '2026-05-02T16:45:00Z', items: [{ id: '6', quantity: 4, product: { name: 'Hydra Moisturizer' } }] },
-        { id: '6', orderNumber: 'IRTH-000084', customerName: 'Yasmin Gamal', subtotal: 450, discount: 0, total: 450, status: 'CANCELLED', paymentMethod: 'COD', createdAt: '2026-05-01T12:00:00Z', items: [{ id: '7', quantity: 1, product: { name: 'Radiance Serum' } }] },
-      ]);
-      setLoading(false);
-    }, 400);
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        const res = await api.getOrders(token || '');
+        setOrders(res.data || []);
+      } catch (err: any) {
+        setError(err.message || 'Failed to load orders');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchOrders();
   }, []);
 
   const filtered = orders.filter(o => {
@@ -61,6 +66,20 @@ export default function OrdersPage() {
         <div className="h-8 w-48 bg-muted rounded-lg animate-pulse" />
         <div className="grid grid-cols-4 gap-4">{[...Array(4)].map((_, i) => <div key={i} className="h-20 bg-muted rounded-xl animate-pulse" />)}</div>
         {[...Array(5)].map((_, i) => <div key={i} className="h-16 bg-muted rounded-xl animate-pulse" />)}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500 mb-4">{error}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="px-4 py-2 rounded-lg bg-primary text-white hover:opacity-90"
+        >
+          Retry
+        </button>
       </div>
     );
   }
