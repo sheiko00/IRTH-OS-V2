@@ -6,15 +6,17 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Truck,
   Megaphone, FolderOpen, BarChart3, Settings, Bell, LogOut,
-  ChevronRight, BoxIcon, Factory, Menu, X, Layers, MessageCircle, ShoppingBag
+  ChevronRight, BoxIcon, Factory, Menu, X, Layers, MessageCircle, ShoppingBag,
+  GitBranch
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatWidget } from '@/components/communications/ChatWidget';
 
 const navigation = [
-  { name: 'لوحة القيادة', href: '/admin/dashboard', icon: LayoutDashboard },
-  { name: 'العمليات', href: '/admin/operations/board', icon: Truck },
-  { name: 'التسويق', href: '/admin/marketing/board', icon: Megaphone },
+  { name: 'لوحة القيادة', href: '/founder', icon: LayoutDashboard },
+  { name: 'معمارية النظام', href: '/admin/architecture', icon: GitBranch },
+  { name: 'العمليات', href: '/operations-board', icon: Truck },
+  { name: 'التسويق', href: '/marketing-board', icon: Megaphone },
   { name: 'المركز المالي', href: '/admin/finance', icon: BoxIcon },
   { name: 'مركز التواصل', href: '/admin/communications', icon: MessageCircle },
   { name: 'الطلبات', href: '/admin/orders', icon: ShoppingBag },
