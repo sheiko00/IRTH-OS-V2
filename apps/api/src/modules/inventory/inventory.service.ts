@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -9,7 +9,8 @@ export class InventoryService {
     const skip = (page - 1) * limit;
     const [variants, total] = await Promise.all([
       this.prisma.productVariant.findMany({
-        skip, take: limit,
+        skip,
+        take: limit,
         include: {
           product: { select: { id: true, name: true, coverImageUrl: true } },
           reorderAlert: true,

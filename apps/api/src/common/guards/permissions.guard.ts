@@ -7,7 +7,7 @@ import { PrismaService } from '../../modules/prisma/prisma.service';
 export class PermissionsGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private prisma: PrismaService,
+    private prisma: PrismaService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -21,7 +21,7 @@ export class PermissionsGuard implements CanActivate {
     }
 
     const { user } = context.switchToHttp().getRequest();
-    if (!user || !user.sub) {
+    if (!user) {
       throw new ForbiddenException('Access denied');
     }
 
@@ -30,25 +30,15 @@ export class PermissionsGuard implements CanActivate {
       return true;
     }
 
-    // Fetch user's role with permissions
-    const dbUser = await this.prisma.user.findUnique({
-      where: { id: user.sub },
-      include: { role: true },
-    });
+    // Use permissions from JWT payload (populated by AuthGuard)
+    const userPermissions = user.permissions || [];
 
-    if (!dbUser || !dbUser.role) {
-      throw new ForbiddenException('User role not found');
-    }
-
-    const userPermissions = dbUser.role.permissions;
     const hasPermission = requiredPermissions.every(
-      (perm) => userPermissions.includes(perm) || userPermissions.includes('*'),
+      perm => userPermissions.includes(perm) || userPermissions.includes('*')
     );
 
     if (!hasPermission) {
-      throw new ForbiddenException(
-        `Missing permissions: ${requiredPermissions.join(', ')}`,
-      );
+      throw new ForbiddenException(`Missing permissions: ${requiredPermissions.join(', ')}`);
     }
 
     return true;

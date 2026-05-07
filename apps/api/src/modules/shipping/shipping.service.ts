@@ -22,7 +22,9 @@ export class ShippingService {
         carrier: data.carrier,
         trackingNumber,
         shippingCost: data.shippingCost || 0,
-        estimatedDeliveryDate: data.estimatedDeliveryDate ? new Date(data.estimatedDeliveryDate) : null,
+        estimatedDeliveryDate: data.estimatedDeliveryDate
+          ? new Date(data.estimatedDeliveryDate)
+          : null,
         events: {
           create: { status: 'PENDING', notes: 'Shipment created' },
         },
@@ -39,7 +41,12 @@ export class ShippingService {
     return shipment;
   }
 
-  async updateStatus(shipmentId: string, status: ShipmentStatus, location?: string, notes?: string) {
+  async updateStatus(
+    shipmentId: string,
+    status: ShipmentStatus,
+    location?: string,
+    notes?: string
+  ) {
     const shipment = await this.prisma.shipment.findUnique({ where: { id: shipmentId } });
     if (!shipment) throw new NotFoundException('Shipment not found');
 
@@ -87,8 +94,13 @@ export class ShippingService {
     const where = status ? { status } : {};
     const [shipments, total] = await Promise.all([
       this.prisma.shipment.findMany({
-        where, skip, take: limit,
-        include: { order: { select: { orderNumber: true, customerName: true } }, events: { take: 1, orderBy: { createdAt: 'desc' } } },
+        where,
+        skip,
+        take: limit,
+        include: {
+          order: { select: { orderNumber: true, customerName: true } },
+          events: { take: 1, orderBy: { createdAt: 'desc' } },
+        },
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.shipment.count({ where }),

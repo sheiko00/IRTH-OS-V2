@@ -2,11 +2,11 @@ import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { AnalyticsService } from './analytics.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { RequirePermission } from '../../common/decorators/permissions.decorator';
+import { RequirePermissions } from '../../common/decorators/permissions.decorator';
 
 @Controller('analytics')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
-@RequirePermission('VIEW_ANALYTICS')
+@RequirePermissions('VIEW_ANALYTICS')
 export class AnalyticsController {
   constructor(private analyticsService: AnalyticsService) {}
 

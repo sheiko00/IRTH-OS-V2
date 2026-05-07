@@ -11,17 +11,31 @@ export class AnalyticsService {
     const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
     const [
-      totalOrders, monthOrders, lastMonthOrders,
-      totalRevenue, monthRevenue,
-      totalCustomers, monthCustomers,
-      totalProducts, activeProducts,
-      lowStockCount, pendingOrders,
+      totalOrders,
+      monthOrders,
+      lastMonthOrders,
+      totalRevenue,
+      monthRevenue,
+      totalCustomers,
+      monthCustomers,
+      totalProducts,
+      activeProducts,
+      lowStockCount,
+      pendingOrders,
     ] = await Promise.all([
       this.prisma.order.count({ where: { isDeleted: false } }),
       this.prisma.order.count({ where: { isDeleted: false, createdAt: { gte: startOfMonth } } }),
-      this.prisma.order.count({ where: { isDeleted: false, createdAt: { gte: startOfLastMonth, lt: startOfMonth } } }),
-      this.prisma.order.aggregate({ where: { isDeleted: false, status: { not: 'CANCELLED' } }, _sum: { total: true } }),
-      this.prisma.order.aggregate({ where: { isDeleted: false, status: { not: 'CANCELLED' }, createdAt: { gte: startOfMonth } }, _sum: { total: true } }),
+      this.prisma.order.count({
+        where: { isDeleted: false, createdAt: { gte: startOfLastMonth, lt: startOfMonth } },
+      }),
+      this.prisma.order.aggregate({
+        where: { isDeleted: false, status: { not: 'CANCELLED' } },
+        _sum: { total: true },
+      }),
+      this.prisma.order.aggregate({
+        where: { isDeleted: false, status: { not: 'CANCELLED' }, createdAt: { gte: startOfMonth } },
+        _sum: { total: true },
+      }),
       this.prisma.customer.count(),
       this.prisma.customer.count({ where: { createdAt: { gte: startOfMonth } } }),
       this.prisma.product.count(),
@@ -31,7 +45,12 @@ export class AnalyticsService {
     ]);
 
     return {
-      orders: { total: totalOrders, thisMonth: monthOrders, lastMonth: lastMonthOrders, pending: pendingOrders },
+      orders: {
+        total: totalOrders,
+        thisMonth: monthOrders,
+        lastMonth: lastMonthOrders,
+        pending: pendingOrders,
+      },
       revenue: { total: totalRevenue._sum.total || 0, thisMonth: monthRevenue._sum.total || 0 },
       customers: { total: totalCustomers, newThisMonth: monthCustomers },
       products: { total: totalProducts, active: activeProducts, lowStock: lowStockCount },

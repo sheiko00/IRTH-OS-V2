@@ -4,7 +4,6 @@ import { PrismaService } from '../prisma/prisma.service';
 
 describe('OrdersService', () => {
   let service: OrdersService;
-  let prismaService: PrismaService;
 
   const mockPrismaService = {
     order: {
@@ -38,7 +37,6 @@ describe('OrdersService', () => {
     }).compile();
 
     service = module.get<OrdersService>(OrdersService);
-    prismaService = module.get<PrismaService>(PrismaService);
   });
 
   it('should be defined', () => {
@@ -49,7 +47,7 @@ describe('OrdersService', () => {
     it('should generate unique order numbers', () => {
       const orderNumber1 = service['generateOrderNumber']();
       const orderNumber2 = service['generateOrderNumber']();
-      
+
       expect(orderNumber1).toMatch(/^IRTH-\d+$/);
       expect(orderNumber2).toMatch(/^IRTH-\d+$/);
     });

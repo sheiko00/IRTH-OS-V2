@@ -16,8 +16,11 @@ import { MarketingModule } from './modules/marketing/marketing.module';
 import { FilesModule } from './modules/files/files.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { CommunicationsModule } from './modules/communications/communications.module';
 import { StorageModule } from './modules/storage/storage.module';
 import { EmailModule } from './modules/email/email.module';
+import { WebSocketsModule } from './modules/websockets/websockets.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -28,15 +31,21 @@ import { EmailModule } from './modules/email/email.module';
     }),
 
     // Rate limiting
-    ThrottlerModule.forRoot([{
-      ttl: 60000, // 1 minute
-      limit: 100, // 100 requests per minute
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // 1 minute
+        limit: 100, // 100 requests per minute
+      },
+    ]),
+
+    // Events
+    EventEmitterModule.forRoot(),
 
     // Core
     PrismaModule,
     StorageModule,
     EmailModule,
+    WebSocketsModule,
 
     // Feature modules
     AuthModule,
@@ -52,6 +61,7 @@ import { EmailModule } from './modules/email/email.module';
     FilesModule,
     AnalyticsModule,
     NotificationsModule,
+    CommunicationsModule,
   ],
   providers: [
     {

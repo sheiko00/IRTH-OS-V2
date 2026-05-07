@@ -46,7 +46,18 @@ export class ProductsService {
         orderBy,
         include: {
           category: { select: { id: true, name: true, slug: true } },
-          variants: { where: { isActive: true }, select: { id: true, sku: true, name: true, price: true, stockQuantity: true, attributes: true, imageUrl: true } },
+          variants: {
+            where: { isActive: true },
+            select: {
+              id: true,
+              sku: true,
+              name: true,
+              price: true,
+              stockQuantity: true,
+              attributes: true,
+              imageUrl: true,
+            },
+          },
         },
       }),
       this.prisma.product.count({ where }),
@@ -118,23 +129,26 @@ export class ProductsService {
     });
   }
 
-  async update(id: string, data: Partial<{
-    name: string;
-    nameAr: string;
-    brand: string;
-    categoryId: string;
-    description: string;
-    descriptionAr: string;
-    status: ProductStatus;
-    basePrice: number;
-    comparePrice: number;
-    cost: number;
-    tags: string[];
-    coverImageUrl: string;
-    galleryUrls: string[];
-    weight: number;
-    isFeatured: boolean;
-  }>) {
+  async update(
+    id: string,
+    data: Partial<{
+      name: string;
+      nameAr: string;
+      brand: string;
+      categoryId: string;
+      description: string;
+      descriptionAr: string;
+      status: ProductStatus;
+      basePrice: number;
+      comparePrice: number;
+      cost: number;
+      tags: string[];
+      coverImageUrl: string;
+      galleryUrls: string[];
+      weight: number;
+      isFeatured: boolean;
+    }>
+  ) {
     const product = await this.prisma.product.findUnique({ where: { id } });
     if (!product) throw new NotFoundException('Product not found');
 
@@ -162,17 +176,20 @@ export class ProductsService {
   }
 
   // ─── VARIANTS ─────────────────────────────────
-  async addVariant(productId: string, data: {
-    sku: string;
-    name?: string;
-    attributes: Record<string, any>;
-    price?: number;
-    cost?: number;
-    stockQuantity?: number;
-    barcode?: string;
-    weight?: number;
-    imageUrl?: string;
-  }) {
+  async addVariant(
+    productId: string,
+    data: {
+      sku: string;
+      name?: string;
+      attributes: Record<string, any>;
+      price?: number;
+      cost?: number;
+      stockQuantity?: number;
+      barcode?: string;
+      weight?: number;
+      imageUrl?: string;
+    }
+  ) {
     const exists = await this.prisma.productVariant.findUnique({ where: { sku: data.sku } });
     if (exists) throw new ConflictException('SKU already exists');
 
@@ -181,17 +198,20 @@ export class ProductsService {
     });
   }
 
-  async updateVariant(variantId: string, data: Partial<{
-    name: string;
-    attributes: Record<string, any>;
-    price: number;
-    cost: number;
-    stockQuantity: number;
-    barcode: string;
-    weight: number;
-    imageUrl: string;
-    isActive: boolean;
-  }>) {
+  async updateVariant(
+    variantId: string,
+    data: Partial<{
+      name: string;
+      attributes: Record<string, any>;
+      price: number;
+      cost: number;
+      stockQuantity: number;
+      barcode: string;
+      weight: number;
+      imageUrl: string;
+      isActive: boolean;
+    }>
+  ) {
     return this.prisma.productVariant.update({ where: { id: variantId }, data });
   }
 
@@ -214,14 +234,29 @@ export class ProductsService {
     });
   }
 
-  async createCategory(data: { name: string; nameAr?: string; parentId?: string; imageUrl?: string; sortOrder?: number }) {
+  async createCategory(data: {
+    name: string;
+    nameAr?: string;
+    parentId?: string;
+    imageUrl?: string;
+    sortOrder?: number;
+  }) {
     const slug = slugify(data.name, { lower: true, strict: true });
     const existing = await this.prisma.category.findUnique({ where: { slug } });
     if (existing) throw new ConflictException('Category slug already exists');
     return this.prisma.category.create({ data: { ...data, slug } });
   }
 
-  async updateCategory(id: string, data: Partial<{ name: string; nameAr: string; imageUrl: string; sortOrder: number; parentId: string }>) {
+  async updateCategory(
+    id: string,
+    data: Partial<{
+      name: string;
+      nameAr: string;
+      imageUrl: string;
+      sortOrder: number;
+      parentId: string;
+    }>
+  ) {
     return this.prisma.category.update({ where: { id }, data });
   }
 

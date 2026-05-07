@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Layers, ShoppingBag, Search, User, Menu, X, Heart } from 'lucide-react';
+import { Search, User, Menu, X, Heart, ShoppingBag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
@@ -12,45 +12,42 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
 
   const navLinks = [
-    { href: '/store', label: 'Shop' },
-    { href: '/store/collections', label: 'Collections' },
-    { href: '/store/about', label: 'About' },
-    { href: '/store/contact', label: 'Contact' },
+    { href: '/store', label: 'المتجر' },
+    { href: '/store/collections', label: 'المجموعات' },
+    { href: '/store/about', label: 'قصتنا' },
+    { href: '/store/contact', label: 'تواصل معنا' },
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-transparent flex flex-col relative">
       {/* Announcement Bar */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-center text-xs py-2 font-medium tracking-wide">
-        ✨ FREE SHIPPING on orders over 500 EGP — Use code <strong>IRTH25</strong> for 25% off
+      <div className="bg-[#244F3A] text-[#F7F5F0] text-center text-xs py-2.5 font-medium tracking-widest font-serif border-b border-[#C8A96A]/20">
+        شحن مجاني للطلبات فوق ٥٠٠ جنيه — استخدم الكود <span className="text-[#C8A96A]">IRTH25</span>
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-[#C8A96A]/10 bg-[#0D0D0D]/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-20">
             {/* Mobile menu toggle */}
-            <button onClick={() => setMobileMenu(!mobileMenu)} className="lg:hidden p-2">
-              {mobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <button onClick={() => setMobileMenu(!mobileMenu)} className="lg:hidden p-2 text-[#F7F5F0]">
+              {mobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
 
             {/* Logo */}
-            <Link href="/store" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
-                <Layers className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-xl font-bold tracking-tight">IRTH</span>
+            <Link href="/store" className="flex items-center gap-3">
+              <span className="text-3xl font-serif font-bold text-[#C8A96A] tracking-wider">إرث</span>
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-8">
+            <nav className="hidden lg:flex items-center gap-10">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    'text-sm font-medium transition-colors hover:text-foreground',
-                    pathname === link.href ? 'text-foreground' : 'text-muted-foreground'
+                    'text-sm font-medium transition-all duration-500 hover:text-[#C8A96A]',
+                    pathname === link.href ? 'text-[#C8A96A]' : 'text-[#F7F5F0]/70'
                   )}
                 >
                   {link.label}
@@ -59,23 +56,23 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
             </nav>
 
             {/* Actions */}
-            <div className="flex items-center gap-3">
-              <button className="p-2 rounded-lg hover:bg-accent transition-colors hidden sm:flex">
-                <Search className="w-5 h-5 text-muted-foreground" />
+            <div className="flex items-center gap-4">
+              <button className="p-2 rounded-full hover:bg-[#C8A96A]/10 transition-colors hidden sm:flex text-[#F7F5F0]">
+                <Search className="w-5 h-5" />
               </button>
-              <button className="p-2 rounded-lg hover:bg-accent transition-colors hidden sm:flex">
-                <Heart className="w-5 h-5 text-muted-foreground" />
+              <button className="p-2 rounded-full hover:bg-[#C8A96A]/10 transition-colors hidden sm:flex text-[#F7F5F0]">
+                <Heart className="w-5 h-5" />
               </button>
-              <Link href="/store/cart" className="relative p-2 rounded-lg hover:bg-accent transition-colors">
-                <ShoppingBag className="w-5 h-5 text-muted-foreground" />
+              <Link href="/store/cart" className="relative p-2 rounded-full hover:bg-[#C8A96A]/10 transition-colors text-[#F7F5F0]">
+                <ShoppingBag className="w-5 h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 bg-purple-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center min-w-[18px] h-[18px]">
+                  <span className="absolute -top-1 -right-1 bg-[#C8A96A] text-[#0D0D0D] text-[10px] font-bold rounded-full flex items-center justify-center min-w-[20px] h-[20px]">
                     {cartCount}
                   </span>
                 )}
               </Link>
-              <Link href="/auth/login" className="p-2 rounded-lg hover:bg-accent transition-colors">
-                <User className="w-5 h-5 text-muted-foreground" />
+              <Link href="/auth/login" className="p-2 rounded-full hover:bg-[#C8A96A]/10 transition-colors text-[#F7F5F0]">
+                <User className="w-5 h-5" />
               </Link>
             </div>
           </div>
@@ -83,16 +80,16 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
 
         {/* Mobile Nav */}
         {mobileMenu && (
-          <div className="lg:hidden border-t border-border bg-background animate-fade-in">
-            <nav className="px-4 py-4 space-y-1">
+          <div className="lg:hidden border-t border-[#C8A96A]/10 bg-[#151515] animate-fade-down">
+            <nav className="px-4 py-6 space-y-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenu(false)}
                   className={cn(
-                    'block px-4 py-3 rounded-xl text-sm font-medium transition-colors',
-                    pathname === link.href ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'
+                    'block px-4 py-3 rounded-lg text-sm font-medium transition-colors',
+                    pathname === link.href ? 'bg-[#C8A96A]/10 text-[#C8A96A]' : 'text-[#F7F5F0]/70 hover:bg-[#C8A96A]/5'
                   )}
                 >
                   {link.label}
@@ -107,49 +104,46 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       <main className="flex-1">{children}</main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <footer className="border-t border-[#C8A96A]/20 bg-[#0D0D0D] mt-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div>
-              <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
-                  <Layers className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-lg font-bold">IRTH</span>
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-3xl font-serif font-bold text-[#C8A96A] tracking-wider">إرث</span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Premium skincare & beauty products crafted with care. Your glow, our mission.
+              <p className="text-sm text-[#F7F5F0]/60 leading-relaxed font-serif">
+                متجذرون في التراث، ونصنع من أجل العافية. كل منتج هو وعد بالنقاء والجودة.
               </p>
             </div>
             <div>
-              <h4 className="text-sm font-semibold mb-4">Shop</h4>
-              <div className="space-y-2.5">
-                {['All Products', 'Skincare', 'Haircare', 'Body Care'].map((i) => (
-                  <Link key={i} href="/store" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{i}</Link>
+              <h4 className="text-lg font-serif text-[#C8A96A] mb-6">المنتجات</h4>
+              <div className="space-y-4">
+                {['جميع المنتجات', 'عجوة المدينة', 'عسل السدر', 'الزيوت الطبيعية'].map((i) => (
+                  <Link key={i} href="/store" className="block text-sm text-[#F7F5F0]/60 hover:text-[#C8A96A] transition-colors">{i}</Link>
                 ))}
               </div>
             </div>
             <div>
-              <h4 className="text-sm font-semibold mb-4">Company</h4>
-              <div className="space-y-2.5">
-                {['About Us', 'Contact', 'Blog', 'Careers'].map((i) => (
-                  <Link key={i} href="#" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{i}</Link>
+              <h4 className="text-lg font-serif text-[#C8A96A] mb-6">عن الشركة</h4>
+              <div className="space-y-4">
+                {['قصتنا', 'تواصل معنا', 'المدونة', 'الوظائف'].map((i) => (
+                  <Link key={i} href="#" className="block text-sm text-[#F7F5F0]/60 hover:text-[#C8A96A] transition-colors">{i}</Link>
                 ))}
               </div>
             </div>
             <div>
-              <h4 className="text-sm font-semibold mb-4">Support</h4>
-              <div className="space-y-2.5">
-                {['FAQ', 'Shipping Info', 'Returns', 'Privacy Policy'].map((i) => (
-                  <Link key={i} href="#" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{i}</Link>
+              <h4 className="text-lg font-serif text-[#C8A96A] mb-6">المساعدة</h4>
+              <div className="space-y-4">
+                {['الأسئلة الشائعة', 'معلومات الشحن', 'الاسترجاع', 'سياسة الخصوصية'].map((i) => (
+                  <Link key={i} href="#" className="block text-sm text-[#F7F5F0]/60 hover:text-[#C8A96A] transition-colors">{i}</Link>
                 ))}
               </div>
             </div>
           </div>
-          <div className="border-t border-border mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-muted-foreground">© 2026 IRTH. All rights reserved.</p>
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <span>Visa</span><span>Mastercard</span><span>Cash on Delivery</span>
+          <div className="border-t border-[#C8A96A]/20 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-[#F7F5F0]/40 font-serif">© 2026 IRTH WELLNESS. All rights reserved.</p>
+            <div className="flex items-center gap-6 text-xs text-[#F7F5F0]/40 font-serif tracking-widest">
+              <span>VISA</span><span>MASTERCARD</span><span>CASH ON DELIVERY</span>
             </div>
           </div>
         </div>

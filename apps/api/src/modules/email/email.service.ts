@@ -53,17 +53,26 @@ export class EmailService {
   }
 
   // ─── ORDER EMAILS ─────────────────────────────
-  async sendOrderConfirmation(to: string, data: {
-    orderNumber: string;
-    customerName: string;
-    items: { name: string; quantity: number; price: number }[];
-    total: number;
-  }) {
-    const itemsHtml = data.items.map(i =>
-      `<tr><td style="padding:8px;border-bottom:1px solid #eee">${i.name}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:center">${i.quantity}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${i.price} EGP</td></tr>`
-    ).join('');
+  async sendOrderConfirmation(
+    to: string,
+    data: {
+      orderNumber: string;
+      customerName: string;
+      items: { name: string; quantity: number; price: number }[];
+      total: number;
+    }
+  ) {
+    const itemsHtml = data.items
+      .map(
+        i =>
+          `<tr><td style="padding:8px;border-bottom:1px solid #eee">${i.name}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:center">${i.quantity}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${i.price} EGP</td></tr>`
+      )
+      .join('');
 
-    return this.sendEmail(to, `تأكيد الطلب #${data.orderNumber}`, `
+    return this.sendEmail(
+      to,
+      `تأكيد الطلب #${data.orderNumber}`,
+      `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden">
         <div style="background:linear-gradient(135deg,#7c3aed,#4f46e5);padding:32px;text-align:center">
           <h1 style="color:#fff;margin:0;font-size:24px">IRTH</h1>
@@ -83,15 +92,19 @@ export class EmailService {
           © 2026 IRTH. All rights reserved.
         </div>
       </div>
-    `);
+    `
+    );
   }
 
-  async sendOrderStatusUpdate(to: string, data: {
-    orderNumber: string;
-    customerName: string;
-    status: string;
-    trackingNumber?: string;
-  }) {
+  async sendOrderStatusUpdate(
+    to: string,
+    data: {
+      orderNumber: string;
+      customerName: string;
+      status: string;
+      trackingNumber?: string;
+    }
+  ) {
     const statusMessages: Record<string, string> = {
       CONFIRMED: 'تم تأكيد طلبك وجاري تحضيره ✅',
       PROCESSING: 'طلبك قيد التحضير 🔄',
@@ -102,7 +115,10 @@ export class EmailService {
       CANCELLED: 'تم إلغاء الطلب ❌',
     };
 
-    return this.sendEmail(to, `تحديث الطلب #${data.orderNumber}`, `
+    return this.sendEmail(
+      to,
+      `تحديث الطلب #${data.orderNumber}`,
+      `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden">
         <div style="background:linear-gradient(135deg,#7c3aed,#4f46e5);padding:32px;text-align:center">
           <h1 style="color:#fff;margin:0;font-size:24px">IRTH</h1>
@@ -114,11 +130,15 @@ export class EmailService {
         </div>
         <div style="background:#f8f9fa;padding:16px;text-align:center;color:#999;font-size:12px">© 2026 IRTH</div>
       </div>
-    `);
+    `
+    );
   }
 
   async sendPasswordReset(to: string, resetLink: string) {
-    return this.sendEmail(to, 'إعادة تعيين كلمة المرور — IRTH', `
+    return this.sendEmail(
+      to,
+      'إعادة تعيين كلمة المرور — IRTH',
+      `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden">
         <div style="background:linear-gradient(135deg,#7c3aed,#4f46e5);padding:32px;text-align:center">
           <h1 style="color:#fff;margin:0;font-size:24px">IRTH</h1>
@@ -131,11 +151,15 @@ export class EmailService {
         </div>
         <div style="background:#f8f9fa;padding:16px;text-align:center;color:#999;font-size:12px">© 2026 IRTH</div>
       </div>
-    `);
+    `
+    );
   }
 
   async sendWelcomeEmail(to: string, name: string) {
-    return this.sendEmail(to, 'أهلاً بك في IRTH! 💜', `
+    return this.sendEmail(
+      to,
+      'أهلاً بك في IRTH! 💜',
+      `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden">
         <div style="background:linear-gradient(135deg,#7c3aed,#4f46e5);padding:32px;text-align:center">
           <h1 style="color:#fff;margin:0;font-size:24px">IRTH</h1>
@@ -147,6 +171,7 @@ export class EmailService {
         </div>
         <div style="background:#f8f9fa;padding:16px;text-align:center;color:#999;font-size:12px">© 2026 IRTH</div>
       </div>
-    `);
+    `
+    );
   }
 }

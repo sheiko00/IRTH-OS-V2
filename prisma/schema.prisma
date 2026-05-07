@@ -31,6 +31,14 @@ model User {
   uploadedAssets     Asset[]
   marketingCampaigns Campaign[]           @relation("CampaignOwner")
   notifications      Notification[]       @relation("UserNotifications")
+  messages           Message[]
+  threads            Thread[]             @relation("ThreadParticipants")
+  eventsCreated      OrderEvent[]
+
+  // Entity Bindings
+  supplierId         String?
+  distributorId      String?
+  shippingPartnerId  String?
 
   @@index([email])
 }
@@ -251,10 +259,16 @@ model Order {
   createdBy     User               @relation("OrderCreator", fields: [createdById], references: [id])
   assignedTo    User?              @relation("OrderAssignee", fields: [assignedToId], references: [id])
   promoCode     PromoCode?         @relation(fields: [promoCodeId], references: [id])
+  
+  distributor   Distributor?       @relation(fields: [distributorId], references: [id])
+  distributorId String?
+
   items         OrderItem[]
   statusHistory OrderStatusHistory[]
   orderNotes    OrderNote[]
   shipments     Shipment[]
+  events        OrderEvent[]
+  thread        Thread?            @relation("OrderThread")
 
   @@index([status, createdAt])
   @@index([isDeleted])
@@ -304,6 +318,21 @@ model OrderNote {
   author User  @relation(fields: [authorId], references: [id])
 }
 
+model OrderEvent {
+  id        String   @id @default(uuid())
+  orderId   String
+  userId    String?
+  type      String   // SYSTEM, USER_ACTION, COMMUNICATION
+  message   String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user  User? @relation(fields: [userId], references: [id])
+
+  @@index([orderId])
+}
+
 // ============================================
 // SUPPLIERS
 // ============================================
@@ -346,6 +375,47 @@ model SupplierFile {
   supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 
   @@index([supplierId])
+}
+
+// ============================================
+// DISTRIBUTORS & B2B
+// ============================================
+
+enum DistributorStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+model Distributor {
+  id        String            @id @default(uuid())
+  name      String
+  company   String
+  email     String            @unique
+  phone     String?
+  region    String?
+  status    DistributorStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  orders    Order[]
+}
+
+// ============================================
+// SHIPPING PARTNERS
+// ============================================
+
+model ShippingPartner {
+  id        String   @id @default(uuid())
+  name      String
+  company   String
+  email     String   @unique
+  phone     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shipments Shipment[]
 }
 
 // ============================================
@@ -474,6 +544,9 @@ model Shipment {
   order  Order           @relation(fields: [orderId], references: [id])
   events ShipmentEvent[]
   expenses Expense[]
+  
+  shippingPartner   ShippingPartner? @relation(fields: [shippingPartnerId], references: [id])
+  shippingPartnerId String?
 
   @@index([status])
   @@index([orderId])
@@ -748,6 +821,43 @@ model Notification {
   @@index([userId, isRead])
   @@index([customerId, isRead])
   @@index([createdAt])
+}
+
+// ============================================
+// COMMUNICATION (THREADS & MESSAGES)
+// ============================================
+
+model Thread {
+  id            String    @id @default(uuid())
+  title         String?
+  type          String    @default("GENERAL") // GENERAL, ORDER, SUPPORT, SUPPLIER
+  orderId       String?   @unique
+  lastMessageId String?   @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  order        Order?    @relation("OrderThread", fields: [orderId], references: [id])
+  lastMessage  Message?  @relation("ThreadLastMessage", fields: [lastMessageId], references: [id])
+  messages     Message[] @relation("ThreadMessages")
+  participants User[]    @relation("ThreadParticipants")
+
+  @@index([orderId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  threadId  String
+  senderId  String
+  content   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  thread          Thread  @relation(fields: [threadId], references: [id], onDelete: Cascade, name: "ThreadMessages")
+  sender          User    @relation(fields: [senderId], references: [id])
+  lastMessageFor  Thread? @relation("ThreadLastMessage")
+
+  @@index([threadId])
+  @@index([senderId])
 }
 
 // ============================================

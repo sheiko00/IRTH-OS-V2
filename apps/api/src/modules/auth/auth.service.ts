@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
@@ -12,7 +17,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
-    private emailService: EmailService,
+    private emailService: EmailService
   ) {}
 
   // ─── ADMIN AUTH ────────────────────────────────
@@ -35,6 +40,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       role: user.role.name,
+      permissions: user.role.permissions,
       type: 'admin',
     });
 
@@ -81,6 +87,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       role: user.role.name,
+      permissions: user.role.permissions,
       type: 'admin',
     });
 
@@ -116,6 +123,7 @@ export class AuthService {
       sub: customer.id,
       email: customer.email,
       type: 'customer',
+      permissions: [], // Customers have no admin permissions
     });
 
     await this.updateRefreshToken(customer.id, tokens.refreshToken, 'customer');
@@ -150,6 +158,7 @@ export class AuthService {
       sub: customer.id,
       email: customer.email,
       type: 'customer',
+      permissions: [],
     });
 
     await this.updateRefreshToken(customer.id, tokens.refreshToken, 'customer');
@@ -186,6 +195,7 @@ export class AuthService {
       sub: supplier.id,
       email: supplier.email,
       type: 'supplier',
+      permissions: ['supplier:dashboard', 'supplier:batches', 'supplier:files'], // Fixed supplier permissions
     });
 
     await this.updateRefreshToken(supplier.id, tokens.refreshToken, 'supplier');
@@ -210,7 +220,10 @@ export class AuthService {
 
       let entity: any;
       if (payload.type === 'admin') {
-        entity = await this.prisma.user.findUnique({ where: { id: payload.sub }, include: { role: true } });
+        entity = await this.prisma.user.findUnique({
+          where: { id: payload.sub },
+          include: { role: true },
+        });
       } else if (payload.type === 'customer') {
         entity = await this.prisma.customer.findUnique({ where: { id: payload.sub } });
       } else if (payload.type === 'supplier') {
@@ -231,8 +244,14 @@ export class AuthService {
         email: entity.email,
         type: payload.type,
       };
+
       if (payload.type === 'admin' && entity.role) {
         newPayload.role = entity.role.name;
+        newPayload.permissions = entity.role.permissions;
+      } else if (payload.type === 'supplier') {
+        newPayload.permissions = ['supplier:dashboard', 'supplier:batches', 'supplier:files'];
+      } else {
+        newPayload.permissions = [];
       }
 
       const tokens = await this.generateTokens(newPayload);
@@ -248,11 +267,11 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get<string>('JWT_SECRET'),
-        expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRY') || '15m',
+        expiresIn: (this.configService.get<string>('JWT_ACCESS_EXPIRY') || '15m') as any,
       }),
       this.jwtService.signAsync(payload, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-        expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRY') || '7d',
+        expiresIn: (this.configService.get<string>('JWT_REFRESH_EXPIRY') || '7d') as any,
       }),
     ]);
 

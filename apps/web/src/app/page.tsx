@@ -1,125 +1,131 @@
 import Link from 'next/link';
 import { 
-  Package, ShoppingCart, Users, BarChart3, Truck, 
-  Megaphone, FolderOpen, Shield, ArrowRight, Sparkles,
-  Layers, Zap
+  Crown, Sparkles, Shield, ArrowLeft, 
+  Layers, Zap, MapPin, Globe
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Animated background */}
+    <div className="min-h-screen bg-[#0D0D0D] relative overflow-hidden font-serif rtl" dir="rtl">
+      {/* Visual Ambiance */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute -bottom-40 right-1/4 w-72 h-72 bg-violet-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-[#C8A96A]/5 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute top-1/2 -left-40 w-[500px] h-[500px] bg-[#244F3A]/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute inset-0 bg-pattern-islamic opacity-[0.03] scale-150" />
       </div>
 
-      {/* Header */}
-      <header className="relative z-10 border-b border-border/50 glass">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-lg shadow-purple-500/25">
-              <Layers className="w-5 h-5 text-white" />
+      {/* Navigation */}
+      <header className="relative z-10 border-b border-[#C8A96A]/10 bg-[#0D0D0D]/40 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full border border-[#C8A96A]/30 flex items-center justify-center bg-[#151515] shadow-[0_0_20px_rgba(200,169,106,0.2)]">
+              <span className="text-[#C8A96A] font-bold text-xl">إ</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight">IRTH OS</h1>
-              <p className="text-xs text-muted-foreground">Commerce Operating System</p>
+              <h1 className="text-2xl font-bold tracking-widest text-[#C8A96A]">IRTH OS</h1>
+              <p className="text-[10px] text-[#F7F5F0]/40 uppercase tracking-[0.3em]">Brand Operating System</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/auth/login"
-              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Sign In
+          <div className="flex items-center gap-6">
+            <Link href="/auth/login" className="text-sm font-bold text-[#F7F5F0]/60 hover:text-[#C8A96A] transition-colors">
+              تسجيل الدخول
             </Link>
-            <Link
-              href="/auth/register"
-              className="px-5 py-2.5 text-sm font-semibold text-white rounded-lg gradient-primary hover:opacity-90 transition-all shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
-            >
-              Get Started
+            <Link href="/auth/register" className="px-8 py-3 text-sm font-bold text-[#0D0D0D] bg-[#C8A96A] rounded-full hover:bg-[#B6975A] transition-all shadow-[0_0_30px_rgba(200,169,106,0.3)]">
+              ابدأ الآن
             </Link>
           </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm mb-8 animate-fade-up">
-          <Sparkles className="w-4 h-4" />
-          <span>Production-Ready Commerce Platform</span>
+      {/* Hero Section */}
+      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-24 text-center">
+        <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-[#C8A96A]/10 border border-[#C8A96A]/20 text-[#C8A96A] text-xs font-bold mb-12 animate-fade-down uppercase tracking-widest">
+          <Crown className="w-4 h-4" />
+          مستقبل إدارة العلامات التجارية الفاخرة
         </div>
-        <h2 className="text-5xl md:text-7xl font-black tracking-tight mb-6 animate-fade-up" style={{ animationDelay: '0.1s' }}>
-          Your Business,
+        
+        <h2 className="text-6xl md:text-8xl font-bold tracking-tight text-[#F7F5F0] mb-8 animate-fade-up leading-tight">
+          إرث القيمة،
           <br />
-          <span className="gradient-text">One Operating System</span>
+          <span className="text-[#C8A96A]">نظام واحد للقيادة</span>
         </h2>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 animate-fade-up" style={{ animationDelay: '0.2s' }}>
-          Commerce · Operations · Supply Chain · Marketing · Analytics
-          <br />
-          Everything you need to run a modern commerce company.
+        
+        <p className="text-xl md:text-2xl text-[#F7F5F0]/60 max-w-3xl mx-auto mb-16 animate-fade-up leading-relaxed" style={{ animationDelay: '0.2s' }}>
+          أول نظام تشغيل مؤسسي مصمم خصيصاً للعلامات التجارية التي تقدّر الأصالة والفخامة. 
+          من المدينة إلى العالم، تحكم في كامل منظومتك بذكاء وهدوء.
         </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-up" style={{ animationDelay: '0.4s' }}>
           <Link
             href="/admin/dashboard"
-            className="group flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white rounded-xl gradient-primary hover:opacity-90 transition-all shadow-xl shadow-purple-500/25 hover:shadow-purple-500/40"
+            className="group flex items-center gap-3 px-10 py-4 text-lg font-bold text-[#0D0D0D] rounded-full bg-[#C8A96A] hover:bg-[#B6975A] transition-all shadow-2xl shadow-[#C8A96A]/20"
           >
-            Open Dashboard
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            دخول مركز القيادة
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           </Link>
           <Link
             href="/store"
-            className="px-8 py-3.5 text-base font-semibold rounded-xl border border-border hover:bg-accent transition-colors"
+            className="px-10 py-4 text-lg font-bold text-[#F7F5F0] rounded-full border border-[#C8A96A]/20 hover:bg-[#C8A96A]/5 transition-all"
           >
-            Visit Store
+            معاينة المتجر
           </Link>
         </div>
       </section>
 
-      {/* Module Grid */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Philosophy / Features */}
+      <section className="relative z-10 max-w-7xl mx-auto px-6 pb-40">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
-            { icon: ShoppingCart, title: 'Commerce', desc: 'Products, Cart, Orders, Checkout', color: 'from-purple-500 to-violet-600', href: '/admin/products' },
-            { icon: Users, title: 'Users & RBAC', desc: 'Roles, Permissions, Team Management', color: 'from-blue-500 to-indigo-600', href: '/admin/users' },
-            { icon: Package, title: 'Suppliers', desc: 'Supplier Management, Files, Batches', color: 'from-emerald-500 to-teal-600', href: '/admin/suppliers' },
-            { icon: Layers, title: 'Inventory', desc: 'Stock, Expiry, Reorder Alerts', color: 'from-amber-500 to-orange-600', href: '/admin/inventory' },
-            { icon: Truck, title: 'Logistics', desc: 'Shipping, Tracking, Delivery', color: 'from-cyan-500 to-blue-600', href: '/admin/shipping' },
-            { icon: Megaphone, title: 'Marketing', desc: 'Campaigns, Coupons, Influencers', color: 'from-pink-500 to-rose-600', href: '/admin/marketing' },
-            { icon: FolderOpen, title: 'File System', desc: 'Upload, Organize, Share', color: 'from-slate-500 to-gray-600', href: '/admin/files' },
-            { icon: BarChart3, title: 'Analytics', desc: 'Sales, Customers, Performance', color: 'from-violet-500 to-purple-600', href: '/admin/analytics' },
-          ].map((module, i) => (
-            <Link
-              key={module.title}
-              href={module.href}
-              className="group p-6 rounded-2xl border border-border/50 bg-card/50 hover:bg-card hover:border-border transition-all duration-300 hover-lift animate-fade-up"
-              style={{ animationDelay: `${0.1 * i}s` }}
+            { 
+              icon: Shield, 
+              title: 'أمان مؤسسي', 
+              desc: 'نظام صلاحيات صارم يحمي أسرار علامتك التجارية وبيانات عملائك.', 
+              color: 'text-[#A9D3B8]',
+              bg: 'bg-[#244F3A]/10'
+            },
+            { 
+              icon: Zap, 
+              title: 'نبض لحظي', 
+              desc: 'شاهد حركة المخزون والطلبات والنمو في لحظة حدوثها دون تأخير.', 
+              color: 'text-[#C8A96A]',
+              bg: 'bg-[#C8A96A]/10'
+            },
+            { 
+              icon: Globe, 
+              title: 'توسع عالمي', 
+              desc: 'بنية تحتية تدعم لغات متعددة، عملات مختلفة، ومستودعات عبر القارات.', 
+              color: 'text-[#3b82f6]',
+              bg: 'bg-blue-500/10'
+            },
+          ].map((feature, i) => (
+            <div
+              key={feature.title}
+              className="p-8 rounded-[2.5rem] border border-[#C8A96A]/10 bg-[#151515]/40 backdrop-blur-sm hover:border-[#C8A96A]/30 transition-all duration-500 group animate-fade-up"
+              style={{ animationDelay: `${0.2 * i}s` }}
             >
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${module.color} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
-                <module.icon className="w-6 h-6 text-white" />
+              <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform", feature.bg, feature.color)}>
+                <feature.icon className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-semibold mb-1">{module.title}</h3>
-              <p className="text-sm text-muted-foreground">{module.desc}</p>
-            </Link>
+              <h3 className="text-2xl font-bold text-[#F7F5F0] mb-3">{feature.title}</h3>
+              <p className="text-[#F7F5F0]/50 leading-relaxed">{feature.desc}</p>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* Tech Stack */}
-      <section className="relative z-10 border-t border-border/50 py-12">
+      {/* Footer Meta */}
+      <footer className="relative z-10 border-t border-[#C8A96A]/10 py-12 bg-[#0D0D0D]">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-sm text-muted-foreground mb-6">Built with</p>
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-medium text-muted-foreground">
-            {['Next.js 15', 'NestJS', 'PostgreSQL', 'Redis', 'Prisma', 'Tailwind CSS', 'TypeScript'].map((tech) => (
-              <div key={tech} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted/50">
-                <Zap className="w-3 h-3 text-purple-500" />
-                {tech}
-              </div>
-            ))}
+          <div className="flex items-center justify-center gap-2 text-[#C8A96A] mb-4">
+             <MapPin className="w-4 h-4" />
+             <span className="text-xs font-bold tracking-widest uppercase">Madinah · Saudi Arabia</span>
           </div>
+          <p className="text-[10px] text-[#F7F5F0]/20 font-sans tracking-[0.4em] uppercase">
+            © 2026 IRTH ENTERPRISE OS · PROPHETIC HERITAGE · LUXURY STANDARDS
+          </p>
         </div>
-      </section>
+      </footer>
     </div>
   );
 }

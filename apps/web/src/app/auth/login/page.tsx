@@ -29,7 +29,18 @@ export default function LoginPage() {
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
       localStorage.setItem('user', JSON.stringify(data.user));
-      window.location.href = '/admin/dashboard';
+
+      // Role-based redirection
+      const role = data.user.role?.name;
+      if (role === 'SUPPLIER') {
+        window.location.href = '/supplier/board';
+      } else if (role === 'DISTRIBUTOR') {
+        window.location.href = '/distributor/board';
+      } else if (role === 'SHIPPING_PARTNER') {
+        window.location.href = '/shipping/dashboard';
+      } else {
+        window.location.href = '/admin/dashboard';
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {

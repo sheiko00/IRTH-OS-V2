@@ -8,7 +8,7 @@ export class CartController {
   @Get()
   async getCart(
     @Headers('x-customer-id') customerId?: string,
-    @Headers('x-session-id') sessionId?: string,
+    @Headers('x-session-id') sessionId?: string
   ) {
     return this.cartService.getOrCreateCart(customerId, sessionId);
   }
@@ -17,7 +17,7 @@ export class CartController {
   async addItem(
     @Headers('x-customer-id') customerId: string,
     @Headers('x-session-id') sessionId: string,
-    @Body() data: { productId: string; variantId: string; quantity: number },
+    @Body() data: { productId: string; variantId: string; quantity: number }
   ) {
     const cart = await this.cartService.getOrCreateCart(customerId, sessionId);
     return this.cartService.addItem(cart.id, data);

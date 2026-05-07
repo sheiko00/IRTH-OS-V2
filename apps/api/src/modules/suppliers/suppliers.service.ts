@@ -13,8 +13,18 @@ export class SuppliersService {
 
     const [suppliers, total] = await Promise.all([
       this.prisma.supplier.findMany({
-        where, skip, take: limit,
-        select: { id: true, name: true, email: true, phone: true, company: true, country: true, status: true, createdAt: true,
+        where,
+        skip,
+        take: limit,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          company: true,
+          country: true,
+          status: true,
+          createdAt: true,
           _count: { select: { files: true, productionBatches: true, payouts: true } },
         },
         orderBy: { createdAt: 'desc' },
@@ -35,11 +45,18 @@ export class SuppliersService {
       },
     });
     if (!supplier) throw new NotFoundException('Supplier not found');
-    const { password, hashedRefreshToken, ...result } = supplier;
+    const { password: _p, hashedRefreshToken: _h, ...result } = supplier;
     return result;
   }
 
-  async create(data: { name: string; email: string; password: string; phone?: string; company?: string; country?: string }) {
+  async create(data: {
+    name: string;
+    email: string;
+    password: string;
+    phone?: string;
+    company?: string;
+    country?: string;
+  }) {
     const exists = await this.prisma.supplier.findUnique({ where: { email: data.email } });
     if (exists) throw new ConflictException('Supplier email already exists');
     const hashed = await bcrypt.hash(data.password, 12);
@@ -49,13 +66,35 @@ export class SuppliersService {
     });
   }
 
-  async update(id: string, data: Partial<{ name: string; phone: string; company: string; country: string; status: SupplierStatus }>) {
-    return this.prisma.supplier.update({ where: { id }, data,
-      select: { id: true, name: true, email: true, phone: true, company: true, country: true, status: true },
+  async update(
+    id: string,
+    data: Partial<{
+      name: string;
+      phone: string;
+      company: string;
+      country: string;
+      status: SupplierStatus;
+    }>
+  ) {
+    return this.prisma.supplier.update({
+      where: { id },
+      data,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        company: true,
+        country: true,
+        status: true,
+      },
     });
   }
 
-  async addFile(supplierId: string, data: { name: string; fileUrl: string; fileType: string; fileSize?: number }) {
+  async addFile(
+    supplierId: string,
+    data: { name: string; fileUrl: string; fileType: string; fileSize?: number }
+  ) {
     return this.prisma.supplierFile.create({
       data: { supplierId, ...data, fileSize: data.fileSize || 0 },
     });

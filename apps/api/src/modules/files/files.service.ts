@@ -8,7 +8,7 @@ import slugify from 'slugify';
 export class FilesService {
   constructor(
     private prisma: PrismaService,
-    private storage: StorageService,
+    private storage: StorageService
   ) {}
 
   // ─── ASSETS ───────────────────────────────────
@@ -21,7 +21,9 @@ export class FilesService {
 
     const [assets, total] = await Promise.all([
       this.prisma.asset.findMany({
-        where, skip, take: limit,
+        where,
+        skip,
+        take: limit,
         include: {
           folder: { select: { id: true, name: true } },
           uploadedBy: { select: { name: true } },
@@ -37,7 +39,7 @@ export class FilesService {
     file: Express.Multer.File,
     uploadedById: string,
     folderId?: string,
-    tags?: string[],
+    tags?: string[]
   ) {
     // Determine asset type from MIME
     let type: AssetType = 'DOCUMENT';
@@ -63,10 +65,18 @@ export class FilesService {
     });
   }
 
-  async createAssetFromUrl(data: {
-    name: string; fileUrl: string; type: AssetType;
-    mimeType?: string; size?: number; folderId?: string; tags?: string[];
-  }, uploadedById: string) {
+  async createAssetFromUrl(
+    data: {
+      name: string;
+      fileUrl: string;
+      type: AssetType;
+      mimeType?: string;
+      size?: number;
+      folderId?: string;
+      tags?: string[];
+    },
+    uploadedById: string
+  ) {
     return this.prisma.asset.create({
       data: { ...data, uploadedById, tags: data.tags || [], size: data.size || 0 },
       include: { folder: true },

@@ -1,8 +1,18 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { RequirePermission } from '../../common/decorators/permissions.decorator';
+import { RequirePermissions } from '../../common/decorators/permissions.decorator';
 import { ProductStatus } from '@prisma/client';
 import { CreateProductDto, UpdateProductDto, CreateCategoryDto } from './dto';
 
@@ -19,9 +29,17 @@ export class ProductsController {
     @Query('category') categoryId?: string,
     @Query('search') search?: string,
     @Query('sort') sort?: string,
-    @Query('featured') featured?: boolean,
+    @Query('featured') featured?: boolean
   ) {
-    return this.productsService.findAll({ page, limit, status, categoryId, search, sort, featured });
+    return this.productsService.findAll({
+      page,
+      limit,
+      status,
+      categoryId,
+      search,
+      sort,
+      featured,
+    });
   }
 
   @Get('categories')
@@ -37,21 +55,21 @@ export class ProductsController {
   // ─── ADMIN ────────────────────────────────────
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('CREATE_PRODUCT')
+  @RequirePermissions('CREATE_PRODUCT')
   create(@Body() data: CreateProductDto) {
     return this.productsService.create(data);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('EDIT_PRODUCT')
+  @RequirePermissions('EDIT_PRODUCT')
   update(@Param('id') id: string, @Body() data: UpdateProductDto) {
     return this.productsService.update(id, data);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('DELETE_PRODUCT')
+  @RequirePermissions('DELETE_PRODUCT')
   delete(@Param('id') id: string) {
     return this.productsService.delete(id);
   }
@@ -59,21 +77,21 @@ export class ProductsController {
   // ─── VARIANTS ─────────────────────────────────
   @Post(':id/variants')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('EDIT_PRODUCT')
+  @RequirePermissions('EDIT_PRODUCT')
   addVariant(@Param('id') productId: string, @Body() data: any) {
     return this.productsService.addVariant(productId, data);
   }
 
   @Patch('variants/:variantId')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('EDIT_PRODUCT')
+  @RequirePermissions('EDIT_PRODUCT')
   updateVariant(@Param('variantId') variantId: string, @Body() data: any) {
     return this.productsService.updateVariant(variantId, data);
   }
 
   @Delete('variants/:variantId')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('DELETE_PRODUCT')
+  @RequirePermissions('DELETE_PRODUCT')
   deleteVariant(@Param('variantId') variantId: string) {
     return this.productsService.deleteVariant(variantId);
   }
@@ -81,21 +99,21 @@ export class ProductsController {
   // ─── CATEGORIES ───────────────────────────────
   @Post('categories')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('CREATE_PRODUCT')
+  @RequirePermissions('CREATE_PRODUCT')
   createCategory(@Body() data: CreateCategoryDto) {
     return this.productsService.createCategory(data);
   }
 
   @Patch('categories/:id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('EDIT_PRODUCT')
+  @RequirePermissions('EDIT_PRODUCT')
   updateCategory(@Param('id') id: string, @Body() data: Partial<CreateCategoryDto>) {
     return this.productsService.updateCategory(id, data);
   }
 
   @Delete('categories/:id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('DELETE_PRODUCT')
+  @RequirePermissions('DELETE_PRODUCT')
   deleteCategory(@Param('id') id: string) {
     return this.productsService.deleteCategory(id);
   }

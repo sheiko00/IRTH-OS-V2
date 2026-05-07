@@ -23,7 +23,9 @@ export class StorageService {
     } else {
       // Local dev fallback — will use emulator or mock
       this.storage = new Storage();
-      this.logger.warn('GCS not configured — file uploads will fail unless running in Cloud environment');
+      this.logger.warn(
+        'GCS not configured — file uploads will fail unless running in Cloud environment'
+      );
     }
 
     this.bucket = this.storage.bucket(bucketName);
@@ -31,7 +33,7 @@ export class StorageService {
 
   async uploadFile(
     file: Express.Multer.File,
-    folder: string = 'uploads',
+    folder: string = 'uploads'
   ): Promise<{ url: string; filename: string; size: number; mimeType: string }> {
     const ext = path.extname(file.originalname);
     const filename = `${folder}/${uuidv4()}${ext}`;
@@ -46,7 +48,7 @@ export class StorageService {
     });
 
     return new Promise((resolve, reject) => {
-      stream.on('error', (err) => {
+      stream.on('error', err => {
         this.logger.error(`Upload failed: ${err.message}`);
         reject(err);
       });
@@ -55,7 +57,7 @@ export class StorageService {
         // Make file publicly accessible
         try {
           await blob.makePublic();
-        } catch (e) {
+        } catch (_e) {
           this.logger.warn('Could not make file public, using signed URL');
         }
 
@@ -76,7 +78,7 @@ export class StorageService {
     buffer: Buffer,
     filename: string,
     mimeType: string,
-    folder: string = 'uploads',
+    folder: string = 'uploads'
   ): Promise<string> {
     const ext = path.extname(filename);
     const storedName = `${folder}/${uuidv4()}${ext}`;
@@ -89,7 +91,7 @@ export class StorageService {
 
     try {
       await blob.makePublic();
-    } catch (e) {
+    } catch (_e) {
       // Ignore — may not have permission
     }
 

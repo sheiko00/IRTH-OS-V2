@@ -11,10 +11,15 @@ export class UsersService {
       this.prisma.user.findMany({
         skip,
         take: limit,
-        include: { role: { select: { id: true, name: true, displayName: true } } },
         select: {
-          id: true, email: true, name: true, avatar: true,
-          isActive: true, roleId: true, role: true, createdAt: true,
+          id: true,
+          email: true,
+          name: true,
+          avatar: true,
+          isActive: true,
+          roleId: true,
+          createdAt: true,
+          role: { select: { id: true, name: true, displayName: true } },
         },
         orderBy: { createdAt: 'desc' },
       }),
@@ -33,7 +38,7 @@ export class UsersService {
       include: { role: true },
     });
     if (!user) throw new NotFoundException('User not found');
-    const { password, hashedRefreshToken, ...result } = user;
+    const { password: _password, hashedRefreshToken: _hashedRefreshToken, ...result } = user;
     return result;
   }
 

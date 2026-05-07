@@ -1,70 +1,107 @@
 'use client';
-import { DollarSign, ShoppingCart, Users, TrendingUp, Package } from 'lucide-react';
+
+import { 
+  BarChart3, TrendingUp, Users, ShoppingCart, 
+  ArrowUpRight, ArrowDownRight, Zap, Crown 
+} from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
+import { MetricSeal } from '@/components/founder/founder-dashboard-primitives';
 
 export default function AnalyticsPage() {
-  const kpis = [
-    { label:'Total Revenue', value: formatCurrency(456780), change:'+23%', icon: DollarSign, color:'bg-gradient-to-br from-purple-500 to-violet-600' },
-    { label:'Total Orders', value:'1,247', change:'+17%', icon: ShoppingCart, color:'bg-gradient-to-br from-blue-500 to-indigo-600' },
-    { label:'Customers', value:'3,420', change:'+12%', icon: Users, color:'bg-gradient-to-br from-emerald-500 to-teal-600' },
-    { label:'Avg Order Value', value: formatCurrency(366), change:'+5%', icon: TrendingUp, color:'bg-gradient-to-br from-amber-500 to-orange-600' },
-  ];
   const topProducts = [
-    { name:'Radiance Serum', sold:342, revenue:153900 },
-    { name:'Hydra Moisturizer', sold:289, revenue:101150 },
-    { name:'Deep Cleansing Gel', sold:215, revenue:60200 },
-    { name:'Vitamin C Toner', sold:198, revenue:43560 },
-    { name:'Body Lotion Luxe', sold:156, revenue:29640 },
+    { name: 'سيروم الإشراق', sold: 342, revenue: 153900, trend: '+١٢٪' },
+    { name: 'كريم الترطيب المكثف', sold: 289, revenue: 101150, trend: '+٨٪' },
+    { name: 'بخور مديني فاخر', sold: 215, revenue: 60200, trend: '+١٥٪' },
   ];
-  const maxSold = topProducts[0]?.sold || 1;
 
   return (
-    <div className="space-y-6 animate-fade-up">
-      <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpis.map(k=>(
-          <div key={k.label} className="p-6 rounded-2xl border border-border bg-card">
-            <div className="flex items-start justify-between mb-4">
-              <div className={`w-11 h-11 rounded-xl ${k.color} flex items-center justify-center`}><k.icon className="w-5 h-5 text-white"/></div>
-              <span className="text-xs font-medium text-green-500 bg-green-500/10 px-2 py-1 rounded-full">{k.change}</span>
-            </div>
-            <p className="text-2xl font-bold">{k.value}</p>
-            <p className="text-sm text-muted-foreground mt-1">{k.label}</p>
-          </div>
-        ))}
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Revenue Chart Placeholder */}
-        <div className="p-6 rounded-2xl border border-border bg-card">
-          <h2 className="text-lg font-semibold mb-4">Revenue Trend</h2>
-          <div className="h-48 flex items-end gap-2">
-            {[28,35,42,38,55,48,62,58,71,65,80,75].map((v,i)=>(
-              <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                <div className="w-full bg-purple-500/80 rounded-t-md transition-all hover:bg-purple-500" style={{height:`${(v/80)*100}%`}}/>
-                <span className="text-[9px] text-muted-foreground">{['J','F','M','A','M','J','J','A','S','O','N','D'][i]}</span>
-              </div>
-            ))}
-          </div>
+    <div className="space-y-10 font-serif animate-fade-in rtl" dir="rtl">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#C8A96A]/10 pb-8">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight text-[#F7F5F0] mb-2">مركز التحليلات الاستراتيجية</h1>
+          <p className="text-[#F7F5F0]/50 max-w-md">تحليل أداء العلامة التجارية، سلوك العملاء، ونمو الحصة السوقية بدقة فائقة.</p>
         </div>
-        {/* Top Products */}
-        <div className="p-6 rounded-2xl border border-border bg-card">
-          <h2 className="text-lg font-semibold mb-4">Top Products</h2>
-          <div className="space-y-4">
-            {topProducts.map((p,i)=>(
-              <div key={i} className="flex items-center gap-4">
-                <span className="text-xs font-bold text-muted-foreground w-5">{i+1}</span>
-                <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center"><Package className="w-4 h-4 text-purple-500"/></div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{p.name}</p>
-                  <div className="w-full h-1.5 bg-muted rounded-full mt-1"><div className="h-full bg-purple-500 rounded-full" style={{width:`${(p.sold/maxSold)*100}%`}}/></div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold">{formatCurrency(p.revenue)}</p>
-                  <p className="text-xs text-muted-foreground">{p.sold} sold</p>
-                </div>
+        <div className="flex items-center gap-4">
+           <div className="px-6 py-2 rounded-full border border-[#C8A96A]/20 bg-[#C8A96A]/5 text-[#C8A96A] text-xs font-bold font-sans">
+              LAST 30 DAYS
+           </div>
+        </div>
+      </div>
+
+      {/* KPI Section */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <MetricSeal metric={{ label: "إجمالي المبيعات", value: formatCurrency(456780), note: "إجمالي الإيرادات في آخر ٣٠ يوم", trend: "+٢٣٪", icon: TrendingUp, tone: "gold" }} />
+        <MetricSeal metric={{ label: "متوسط قيمة الطلب", value: formatCurrency(366), note: "القيمة المتوسطة لكل عملية شراء", trend: "+٥٪", icon: ShoppingCart, tone: "gold" }} />
+        <MetricSeal metric={{ label: "قاعدة العملاء", value: "٣,٤٢٠", note: "إجمالي العملاء المسجلين والنشطين", trend: "+١٢٪", icon: Users, tone: "green" }} />
+        <MetricSeal metric={{ label: "معدل التحويل", value: "٣.٨٪", note: "نسبة التحويل من الزيارات لطلبات", trend: "+٠.٤٪", icon: Zap, tone: "green" }} />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Revenue Intelligence */}
+        <div className="p-8 rounded-[2.5rem] bg-[#151515] border border-[#C8A96A]/10 relative overflow-hidden group">
+           <div className="flex items-center justify-between mb-10">
+              <h3 className="text-xl font-bold text-[#F7F5F0]">نمو الإيرادات الشهري</h3>
+              <div className="flex gap-2">
+                 <div className="w-3 h-3 rounded-full bg-[#C8A96A]" />
+                 <div className="w-3 h-3 rounded-full bg-[#244F3A]" />
               </div>
-            ))}
-          </div>
+           </div>
+           
+           <div className="h-64 flex items-end gap-3 md:gap-4 pb-4 border-b border-[#C8A96A]/10">
+              {[40, 55, 45, 70, 60, 85, 75, 95, 80, 100, 90, 110].map((v, i) => (
+                <div key={i} className="flex-1 group/bar relative">
+                   <div 
+                      className="w-full bg-gradient-to-t from-[#C8A96A]/20 to-[#C8A96A] rounded-t-lg transition-all duration-700 hover:scale-x-110" 
+                      style={{ height: `${(v/110)*100}%` }}
+                   >
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#C8A96A] text-[#0D0D0D] text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity">
+                         {v}k
+                      </div>
+                   </div>
+                </div>
+              ))}
+           </div>
+           <div className="mt-6 flex justify-between px-2">
+              {['J','F','M','A','M','J','J','A','S','O','N','D'].map(m => (
+                <span key={m} className="text-[10px] text-[#F7F5F0]/20 font-bold">{m}</span>
+              ))}
+           </div>
+        </div>
+
+        {/* Top Performing Assets */}
+        <div className="p-8 rounded-[2.5rem] bg-[#151515] border border-[#C8A96A]/10 relative overflow-hidden">
+           <h3 className="text-xl font-bold text-[#F7F5F0] mb-8">المنتجات الأكثر تأثيراً</h3>
+           <div className="space-y-6">
+              {topProducts.map((p, i) => (
+                <div key={p.name} className="group flex items-center justify-between p-4 rounded-2xl border border-transparent hover:border-[#C8A96A]/10 hover:bg-[#0D0D0D]/40 transition-all cursor-pointer">
+                   <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-[#C8A96A]/10 border border-[#C8A96A]/20 flex items-center justify-center text-[#C8A96A] font-bold">
+                         {i + 1}
+                      </div>
+                      <div>
+                         <p className="text-sm font-bold text-[#F7F5F0]">{p.name}</p>
+                         <p className="text-[10px] text-[#F7F5F0]/30">{p.sold} وحدة مباعة</p>
+                      </div>
+                   </div>
+                   <div className="text-left">
+                      <p className="text-sm font-bold text-[#C8A96A]">{formatCurrency(p.revenue)}</p>
+                      <span className="text-[10px] text-[#A9D3B8] font-bold">{p.trend}</span>
+                   </div>
+                </div>
+              ))}
+           </div>
+           
+           <div className="mt-10 p-6 rounded-2xl bg-[#C8A96A]/5 border border-[#C8A96A]/10 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                 <Crown className="w-6 h-6 text-[#C8A96A]" />
+                 <div>
+                    <p className="text-xs font-bold text-[#F7F5F0]">المنتج النجم (Star Product)</p>
+                    <p className="text-[10px] text-[#F7F5F0]/40">سيروم الإشراق يحقق أعلى ROAS</p>
+                 </div>
+              </div>
+              <ArrowUpRight className="w-5 h-5 text-[#C8A96A]" />
+           </div>
         </div>
       </div>
     </div>

@@ -4,24 +4,27 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Layers, LayoutDashboard, Package, ShoppingCart, Users, Truck,
+  LayoutDashboard, Package, ShoppingCart, Users, Truck,
   Megaphone, FolderOpen, BarChart3, Settings, Bell, LogOut,
-  ChevronLeft, BoxIcon, Factory, Menu, X
+  ChevronRight, BoxIcon, Factory, Menu, X, Layers, MessageCircle, ShoppingBag
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ChatWidget } from '@/components/communications/ChatWidget';
 
 const navigation = [
-  { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-  { name: 'Products', href: '/admin/products', icon: Package },
-  { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
-  { name: 'Suppliers', href: '/admin/suppliers', icon: Factory },
-  { name: 'Inventory', href: '/admin/inventory', icon: BoxIcon },
-  { name: 'Shipping', href: '/admin/shipping', icon: Truck },
-  { name: 'Marketing', href: '/admin/marketing', icon: Megaphone },
-  { name: 'Files', href: '/admin/files', icon: FolderOpen },
-  { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-  { name: 'Users', href: '/admin/users', icon: Users },
-  { name: 'Settings', href: '/admin/settings', icon: Settings },
+  { name: 'لوحة القيادة', href: '/admin/dashboard', icon: LayoutDashboard },
+  { name: 'العمليات', href: '/admin/operations/board', icon: Truck },
+  { name: 'التسويق', href: '/admin/marketing/board', icon: Megaphone },
+  { name: 'المركز المالي', href: '/admin/finance', icon: BoxIcon },
+  { name: 'مركز التواصل', href: '/admin/communications', icon: MessageCircle },
+  { name: 'الطلبات', href: '/admin/orders', icon: ShoppingBag },
+  { name: 'المخزون', href: '/admin/inventory', icon: Layers },
+  { name: 'المنتجات', href: '/admin/products', icon: Package },
+  { name: 'الموردين', href: '/admin/suppliers', icon: Factory },
+  { name: 'الملفات', href: '/admin/files', icon: FolderOpen },
+  { name: 'التقارير', href: '/admin/analytics', icon: BarChart3 },
+  { name: 'المستخدمين', href: '/admin/users', icon: Users },
+  { name: 'الإعدادات', href: '/admin/settings', icon: Settings },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -37,42 +40,42 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-[#0D0D0D] flex font-serif">
       {/* Mobile overlay */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setMobileOpen(false)} />
+        <div className="fixed inset-0 z-40 bg-[#0D0D0D]/80 backdrop-blur-sm lg:hidden" onClick={() => setMobileOpen(false)} />
       )}
 
       {/* Sidebar */}
       <aside className={cn(
-        'fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border bg-sidebar transition-all duration-300',
-        collapsed ? 'w-[68px]' : 'w-64',
-        mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+        'fixed inset-y-0 right-0 z-50 flex flex-col border-l border-[#C8A96A]/10 bg-[#151515] transition-all duration-500 shadow-2xl',
+        collapsed ? 'w-[80px]' : 'w-72',
+        mobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0',
       )}>
         {/* Logo */}
-        <div className={cn('flex items-center border-b border-border h-16 px-4', collapsed ? 'justify-center' : 'gap-3')}>
-          <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center flex-shrink-0">
-            <Layers className="w-5 h-5 text-white" />
+        <div className={cn('flex items-center border-b border-[#C8A96A]/10 h-20 px-6', collapsed ? 'justify-center px-0' : 'gap-4')}>
+          <div className="w-10 h-10 rounded-full border border-[#C8A96A]/30 flex items-center justify-center flex-shrink-0 bg-[#0D0D0D]">
+            <span className="text-[#C8A96A] font-bold text-lg">إ</span>
           </div>
           {!collapsed && (
-            <div className="animate-fade-in">
-              <h1 className="text-base font-bold tracking-tight">IRTH OS</h1>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Admin</p>
+            <div className="animate-fade-in flex-1">
+              <h1 className="text-xl font-bold tracking-wider text-[#C8A96A]">IRTH OS</h1>
+              <p className="text-[10px] text-[#F7F5F0]/50 tracking-widest uppercase mt-0.5">الإدارة العليا</p>
             </div>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="ml-auto hidden lg:flex w-7 h-7 items-center justify-center rounded-md hover:bg-accent transition-colors"
+            className="hidden lg:flex w-8 h-8 items-center justify-center rounded-full hover:bg-[#C8A96A]/10 transition-colors text-[#F7F5F0]/60 hover:text-[#C8A96A]"
           >
-            <ChevronLeft className={cn('w-4 h-4 transition-transform', collapsed && 'rotate-180')} />
+            <ChevronRight className={cn('w-5 h-5 transition-transform duration-500', collapsed && 'rotate-180')} />
           </button>
-          <button onClick={() => setMobileOpen(false)} className="lg:hidden ml-auto">
-            <X className="w-5 h-5" />
+          <button onClick={() => setMobileOpen(false)} className="lg:hidden text-[#F7F5F0]/60">
+            <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
+        <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
           {navigation.map((item) => {
             const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
             return (
@@ -81,58 +84,66 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
+                  'flex items-center gap-4 px-4 py-3 rounded-xl text-sm transition-all duration-300 relative group',
                   isActive
-                    ? 'bg-sidebar-accent text-primary shadow-sm'
-                    : 'text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-accent/50',
+                    ? 'bg-[#C8A96A]/10 text-[#C8A96A] font-bold'
+                    : 'text-[#F7F5F0]/60 hover:text-[#C8A96A] hover:bg-[#C8A96A]/5 font-medium',
                   collapsed && 'justify-center px-2',
                 )}
                 title={collapsed ? item.name : undefined}
               >
-                <item.icon className={cn('w-[18px] h-[18px] flex-shrink-0', isActive && 'text-primary')} />
-                {!collapsed && <span>{item.name}</span>}
+                {isActive && !collapsed && (
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#C8A96A] rounded-l-full shadow-[0_0_10px_rgba(200,169,106,0.5)]"></div>
+                )}
+                <item.icon className={cn('w-[20px] h-[20px] flex-shrink-0 transition-transform duration-300 group-hover:scale-110', isActive && 'text-[#C8A96A]')} />
+                {!collapsed && <span className="tracking-wide">{item.name}</span>}
               </Link>
             );
           })}
         </nav>
 
         {/* Bottom */}
-        <div className="border-t border-border p-2">
+        <div className="border-t border-[#C8A96A]/10 p-4">
           <button
             onClick={handleLogout}
             className={cn(
-              'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-destructive/70 hover:text-destructive hover:bg-destructive/10 transition-all',
+              'flex items-center gap-4 w-full px-4 py-3 rounded-xl text-sm font-medium text-red-400/70 hover:text-red-400 hover:bg-red-400/10 transition-all duration-300',
               collapsed && 'justify-center px-2',
             )}
           >
-            <LogOut className="w-[18px] h-[18px]" />
-            {!collapsed && <span>Logout</span>}
+            <LogOut className="w-[20px] h-[20px]" />
+            {!collapsed && <span>تسجيل الخروج</span>}
           </button>
         </div>
       </aside>
 
       {/* Main content */}
-      <div className={cn('flex-1 flex flex-col transition-all duration-300', collapsed ? 'lg:ml-[68px]' : 'lg:ml-64')}>
+      <div className={cn('flex-1 flex flex-col transition-all duration-500 relative min-h-screen', collapsed ? 'lg:mr-[80px]' : 'lg:mr-72')}>
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex items-center h-16 border-b border-border bg-background/80 backdrop-blur-xl px-4 lg:px-6 gap-4">
-          <button onClick={() => setMobileOpen(true)} className="lg:hidden">
-            <Menu className="w-5 h-5" />
+        <header className="sticky top-0 z-30 flex items-center h-20 border-b border-[#C8A96A]/10 bg-[#0D0D0D]/80 backdrop-blur-xl px-6 lg:px-10 gap-6">
+          <button onClick={() => setMobileOpen(true)} className="lg:hidden text-[#F7F5F0]/80 hover:text-[#C8A96A]">
+            <Menu className="w-6 h-6" />
           </button>
+          
           <div className="flex-1" />
-          <button className="relative p-2 rounded-lg hover:bg-accent transition-colors">
-            <Bell className="w-5 h-5 text-muted-foreground" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-purple-500 rounded-full" />
+          
+          <button className="relative p-2.5 rounded-full hover:bg-[#C8A96A]/10 transition-colors text-[#F7F5F0]/60 hover:text-[#C8A96A]">
+            <Bell className="w-5 h-5" />
+            <span className="absolute top-1 right-2 w-2 h-2 bg-[#C8A96A] rounded-full shadow-[0_0_8px_rgba(200,169,106,0.8)]" />
           </button>
-          <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold">
-            A
+          
+          <div className="w-10 h-10 rounded-full border border-[#C8A96A]/30 flex items-center justify-center bg-[#151515] text-[#C8A96A] font-bold shadow-inner">
+            م
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-4 lg:p-6">
+        <main className="flex-1 p-6 lg:p-10 relative z-10">
+          <div className="absolute inset-0 bg-pattern-islamic opacity-5 pointer-events-none z-[-1]"></div>
           {children}
         </main>
       </div>
+      <ChatWidget />
     </div>
   );
 }

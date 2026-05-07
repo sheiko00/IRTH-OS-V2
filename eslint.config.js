@@ -1,3 +1,4 @@
+const path = require('path');
 const ts = require('@typescript-eslint/eslint-plugin');
 const tsParser = require('@typescript-eslint/parser');
 const prettier = require('eslint-plugin-prettier');
@@ -10,7 +11,7 @@ module.exports = [
       parserOptions: {
         ecmaVersion: 2022,
         sourceType: 'module',
-        project: './apps/api/tsconfig.json',
+        project: path.resolve(__dirname, 'apps/api/tsconfig.json'),
       },
       globals: {
         console: 'readonly',
@@ -29,7 +30,7 @@ module.exports = [
       ...ts.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
       'prettier/prettier': 'error',
       'no-unused-vars': 'off',
       'no-undef': 'off',

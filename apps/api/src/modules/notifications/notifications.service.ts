@@ -10,13 +10,18 @@ export class NotificationsService {
     const [notifications, total, unreadCount] = await Promise.all([
       this.prisma.notification.findMany({
         where: { userId },
-        skip, take: limit,
+        skip,
+        take: limit,
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.notification.count({ where: { userId } }),
       this.prisma.notification.count({ where: { userId, isRead: false } }),
     ]);
-    return { data: notifications, unreadCount, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+    return {
+      data: notifications,
+      unreadCount,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async markAsRead(notificationId: string) {

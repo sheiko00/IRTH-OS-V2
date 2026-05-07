@@ -2,7 +2,7 @@ import { Controller, Get, Post, Patch, Param, Body, Query, UseGuards } from '@ne
 import { MarketingService } from './marketing.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { RequirePermission } from '../../common/decorators/permissions.decorator';
+import { RequirePermissions } from '../../common/decorators/permissions.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { CampaignStatus } from '@prisma/client';
 
@@ -14,28 +14,32 @@ export class MarketingController {
   // ─── CAMPAIGNS ────────────────────────────────
   @Get('campaigns')
   @UseGuards(PermissionsGuard)
-  @RequirePermission('VIEW_MARKETING')
-  findAllCampaigns(@Query('page') page?: number, @Query('limit') limit?: number, @Query('status') status?: CampaignStatus) {
+  @RequirePermissions('VIEW_MARKETING')
+  findAllCampaigns(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('status') status?: CampaignStatus
+  ) {
     return this.marketingService.findAllCampaigns(page, limit, status);
   }
 
   @Post('campaigns')
   @UseGuards(PermissionsGuard)
-  @RequirePermission('CREATE_CAMPAIGN')
+  @RequirePermissions('CREATE_CAMPAIGN')
   createCampaign(@Body() data: any, @CurrentUser('sub') userId: string) {
     return this.marketingService.createCampaign(data, userId);
   }
 
   @Patch('campaigns/:id')
   @UseGuards(PermissionsGuard)
-  @RequirePermission('EDIT_CAMPAIGN')
+  @RequirePermissions('EDIT_CAMPAIGN')
   updateCampaign(@Param('id') id: string, @Body() data: any) {
     return this.marketingService.updateCampaign(id, data);
   }
 
   @Patch('campaigns/:id/kpi')
   @UseGuards(PermissionsGuard)
-  @RequirePermission('EDIT_CAMPAIGN')
+  @RequirePermissions('EDIT_CAMPAIGN')
   updateKPI(@Param('id') id: string, @Body() data: any) {
     return this.marketingService.updateKPI(id, data);
   }
@@ -43,14 +47,14 @@ export class MarketingController {
   // ─── PROMO CODES ──────────────────────────────
   @Get('coupons')
   @UseGuards(PermissionsGuard)
-  @RequirePermission('VIEW_MARKETING')
+  @RequirePermissions('VIEW_MARKETING')
   findAllCoupons(@Query('page') page?: number, @Query('limit') limit?: number) {
     return this.marketingService.findAllPromoCodes(page, limit);
   }
 
   @Post('coupons')
   @UseGuards(PermissionsGuard)
-  @RequirePermission('MANAGE_COUPONS')
+  @RequirePermissions('MANAGE_COUPONS')
   createCoupon(@Body() data: any) {
     return this.marketingService.createPromoCode(data);
   }
@@ -62,7 +66,7 @@ export class MarketingController {
 
   @Patch('coupons/:id/toggle')
   @UseGuards(PermissionsGuard)
-  @RequirePermission('MANAGE_COUPONS')
+  @RequirePermissions('MANAGE_COUPONS')
   toggleCoupon(@Param('id') id: string) {
     return this.marketingService.togglePromoCode(id);
   }
@@ -70,21 +74,21 @@ export class MarketingController {
   // ─── INFLUENCERS ──────────────────────────────
   @Get('influencers')
   @UseGuards(PermissionsGuard)
-  @RequirePermission('VIEW_MARKETING')
+  @RequirePermissions('VIEW_MARKETING')
   findAllInfluencers(@Query('page') page?: number, @Query('limit') limit?: number) {
     return this.marketingService.findAllInfluencers(page, limit);
   }
 
   @Post('influencers')
   @UseGuards(PermissionsGuard)
-  @RequirePermission('CREATE_CAMPAIGN')
+  @RequirePermissions('CREATE_CAMPAIGN')
   createInfluencer(@Body() data: any) {
     return this.marketingService.createInfluencer(data);
   }
 
   @Patch('influencers/:id')
   @UseGuards(PermissionsGuard)
-  @RequirePermission('EDIT_CAMPAIGN')
+  @RequirePermissions('EDIT_CAMPAIGN')
   updateInfluencer(@Param('id') id: string, @Body() data: any) {
     return this.marketingService.updateInfluencer(id, data);
   }

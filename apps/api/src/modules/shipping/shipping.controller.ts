@@ -2,7 +2,7 @@ import { Controller, Get, Post, Patch, Param, Body, Query, UseGuards } from '@ne
 import { ShippingService } from './shipping.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { RequirePermission } from '../../common/decorators/permissions.decorator';
+import { RequirePermissions } from '../../common/decorators/permissions.decorator';
 import { ShipmentStatus } from '@prisma/client';
 
 @Controller('shipping')
@@ -17,33 +17,37 @@ export class ShippingController {
 
   @Get()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('VIEW_SHIPPING')
-  findAll(@Query('page') page?: number, @Query('limit') limit?: number, @Query('status') status?: ShipmentStatus) {
+  @RequirePermissions('VIEW_SHIPPING')
+  findAll(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('status') status?: ShipmentStatus
+  ) {
     return this.shippingService.findAll(page, limit, status);
   }
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('MANAGE_SHIPPING')
+  @RequirePermissions('MANAGE_SHIPPING')
   create(@Body() data: any) {
     return this.shippingService.createShipment(data);
   }
 
   @Patch(':id/status')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('MANAGE_SHIPPING')
+  @RequirePermissions('MANAGE_SHIPPING')
   updateStatus(
     @Param('id') id: string,
     @Body('status') status: ShipmentStatus,
     @Body('location') location?: string,
-    @Body('notes') notes?: string,
+    @Body('notes') notes?: string
   ) {
     return this.shippingService.updateStatus(id, status, location, notes);
   }
 
   @Get('order/:orderId')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermission('VIEW_SHIPPING')
+  @RequirePermissions('VIEW_SHIPPING')
   findByOrder(@Param('orderId') orderId: string) {
     return this.shippingService.findByOrder(orderId);
   }

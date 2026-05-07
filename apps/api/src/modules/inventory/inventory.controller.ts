@@ -2,11 +2,11 @@ import { Controller, Get, Post, Delete, Param, Body, Query, UseGuards } from '@n
 import { InventoryService } from './inventory.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { RequirePermission } from '../../common/decorators/permissions.decorator';
+import { RequirePermissions } from '../../common/decorators/permissions.decorator';
 
 @Controller('inventory')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
-@RequirePermission('VIEW_INVENTORY')
+@RequirePermissions('VIEW_INVENTORY')
 export class InventoryController {
   constructor(private inventoryService: InventoryService) {}
 
@@ -26,19 +26,19 @@ export class InventoryController {
   }
 
   @Post('batches')
-  @RequirePermission('MANAGE_INVENTORY')
+  @RequirePermissions('MANAGE_INVENTORY')
   addBatch(@Body() data: any) {
     return this.inventoryService.addBatch(data);
   }
 
   @Post('alerts')
-  @RequirePermission('MANAGE_INVENTORY')
+  @RequirePermissions('MANAGE_INVENTORY')
   setReorderAlert(@Body() data: { variantId: string; minStock: number }) {
     return this.inventoryService.setReorderAlert(data.variantId, data.minStock);
   }
 
   @Delete('alerts/:variantId')
-  @RequirePermission('MANAGE_INVENTORY')
+  @RequirePermissions('MANAGE_INVENTORY')
   removeReorderAlert(@Param('variantId') variantId: string) {
     return this.inventoryService.removeReorderAlert(variantId);
   }

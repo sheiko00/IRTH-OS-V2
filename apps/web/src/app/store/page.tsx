@@ -2,89 +2,61 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Heart, Star, SlidersHorizontal, ChevronDown } from 'lucide-react';
+import { ShoppingBag, Star, Leaf } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
 
 const PRODUCTS = [
-  { id: '1', name: 'Radiance Serum', slug: 'radiance-serum', brand: 'IRTH', category: 'Skincare', price: 450, comparePrice: 599, rating: 4.8, reviews: 127, badge: 'Bestseller', image: null },
-  { id: '2', name: 'Hydra Moisturizer', slug: 'hydra-moisturizer', brand: 'IRTH', category: 'Skincare', price: 350, comparePrice: 450, rating: 4.7, reviews: 89, badge: null, image: null },
-  { id: '3', name: 'Deep Cleansing Gel', slug: 'deep-cleansing-gel', brand: 'IRTH', category: 'Skincare', price: 280, comparePrice: null, rating: 4.5, reviews: 64, badge: 'New', image: null },
-  { id: '4', name: 'Hair Growth Oil', slug: 'hair-growth-oil', brand: 'IRTH', category: 'Haircare', price: 320, comparePrice: null, rating: 4.6, reviews: 42, badge: null, image: null },
-  { id: '5', name: 'Vitamin C Toner', slug: 'vitamin-c-toner', brand: 'IRTH', category: 'Skincare', price: 220, comparePrice: 299, rating: 4.9, reviews: 156, badge: 'Top Rated', image: null },
-  { id: '6', name: 'Body Lotion Luxe', slug: 'body-lotion-luxe', brand: 'IRTH', category: 'Body Care', price: 190, comparePrice: null, rating: 4.4, reviews: 38, badge: null, image: null },
-  { id: '7', name: 'Anti-Aging Night Cream', slug: 'anti-aging-cream', brand: 'IRTH', category: 'Skincare', price: 520, comparePrice: 699, rating: 4.8, reviews: 93, badge: 'Sale', image: null },
-  { id: '8', name: 'Scalp Treatment Serum', slug: 'scalp-treatment', brand: 'IRTH', category: 'Haircare', price: 380, comparePrice: null, rating: 4.3, reviews: 27, badge: null, image: null },
+  { id: '1', name: 'عجوة المدينة الفاخرة', slug: 'ajwa-dates', brand: 'إرث', category: 'التمور', price: 250, comparePrice: null, rating: 5.0, reviews: 127, badge: 'الأكثر مبيعاً', image: null },
+  { id: '2', name: 'عسل السدر الصافي', slug: 'sidr-honey', brand: 'إرث', category: 'العسل الطبيعي', price: 450, comparePrice: 550, rating: 4.9, reviews: 89, badge: 'عرض خاص', image: null },
+  { id: '3', name: 'زيت الحبة السوداء العضوي', slug: 'black-seed-oil', brand: 'إرث', category: 'الزيوت الطبيعية', price: 180, comparePrice: null, rating: 4.8, reviews: 64, badge: null, image: null },
+  { id: '4', name: 'مجموعة العافية المتكاملة', slug: 'wellness-bundle', brand: 'إرث', category: 'المجموعات', price: 800, comparePrice: 950, rating: 5.0, reviews: 42, badge: 'حصري', image: null },
 ];
 
-const CATEGORIES = ['All', 'Skincare', 'Haircare', 'Body Care'];
+const CATEGORIES = ['الكل', 'التمور', 'العسل الطبيعي', 'الزيوت الطبيعية'];
 
 function ProductCard({ product }: { product: typeof PRODUCTS[0] }) {
-  const discount = product.comparePrice ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100) : 0;
-
   return (
-    <Link href={`/store/product/${product.slug}`} className="group animate-fade-up">
-      <div className="relative aspect-square rounded-2xl bg-gradient-to-br from-purple-500/5 to-indigo-500/5 border border-border overflow-hidden mb-4 transition-all group-hover:border-purple-500/30 group-hover:shadow-lg group-hover:shadow-purple-500/5">
+    <Link href={`/store/product/${product.slug}`} className="group block animate-fade-up">
+      <div className="relative aspect-[4/5] arch-container bg-[#151515] overflow-hidden mb-6 transition-all duration-700 border border-[#C8A96A]/10 group-hover:border-[#C8A96A]/30">
+        
+        {/* Background glow on hover */}
+        <div className="absolute inset-0 bg-[#C8A96A]/0 group-hover:bg-[#C8A96A]/5 transition-colors duration-700 z-0"></div>
+
         {/* Badge */}
         {product.badge && (
-          <span className={cn(
-            'absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider z-10',
-            product.badge === 'Sale' ? 'bg-red-500 text-white' :
-            product.badge === 'Bestseller' ? 'bg-purple-600 text-white' :
-            product.badge === 'New' ? 'bg-emerald-500 text-white' :
-            'bg-amber-500 text-white'
-          )}>
-            {product.badge}
-          </span>
+          <div className="absolute top-6 right-1/2 translate-x-1/2 z-10 flex flex-col items-center">
+            <span className="text-[#C8A96A] text-[10px] font-bold tracking-widest uppercase bg-[#0D0D0D]/80 backdrop-blur-md px-4 py-1.5 rounded-full border border-[#C8A96A]/30">
+              {product.badge}
+            </span>
+          </div>
         )}
 
-        {/* Discount badge */}
-        {discount > 0 && !product.badge && (
-          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-500 text-white z-10">
-            -{discount}%
-          </span>
-        )}
-
-        {/* Wishlist */}
-        <button
-          onClick={(e) => { e.preventDefault(); }}
-          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-background z-10"
-        >
-          <Heart className="w-4 h-4 text-muted-foreground" />
-        </button>
-
-        {/* Product image placeholder */}
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-            <ShoppingBag className="w-10 h-10 text-purple-500/40" />
+        {/* Product icon placeholder */}
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <div className="w-24 h-24 rounded-full border border-[#C8A96A]/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-700 bg-[#0D0D0D]/50 backdrop-blur-sm">
+            <Leaf className="w-8 h-8 text-[#C8A96A]/60" />
           </div>
         </div>
 
         {/* Quick add */}
-        <div className="absolute bottom-0 inset-x-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+        <div className="absolute bottom-6 inset-x-0 px-6 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-20">
           <button
             onClick={(e) => { e.preventDefault(); }}
-            className="w-full py-2.5 rounded-xl text-sm font-semibold text-white gradient-primary hover:opacity-90 transition-all shadow-lg"
+            className="w-full py-3 rounded-full text-sm font-bold text-[#0D0D0D] bg-[#C8A96A] hover:bg-[#dfbd76] transition-all shadow-[0_0_15px_rgba(200,169,106,0.3)]"
           >
-            Add to Cart
+            إضافة للسلة
           </button>
         </div>
       </div>
 
       {/* Info */}
-      <div className="space-y-1.5">
-        <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">{product.category}</p>
-        <h3 className="text-sm font-semibold group-hover:text-purple-500 transition-colors">{product.name}</h3>
-        <div className="flex items-center gap-1.5">
-          <div className="flex items-center gap-0.5">
-            <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-            <span className="text-xs font-medium">{product.rating}</span>
-          </div>
-          <span className="text-xs text-muted-foreground">({product.reviews})</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-base font-bold">{formatCurrency(product.price)}</span>
+      <div className="text-center space-y-2">
+        <p className="text-xs text-[#C8A96A]/70 uppercase tracking-widest font-serif">{product.category}</p>
+        <h3 className="text-lg font-serif font-bold text-[#F7F5F0] group-hover:text-[#C8A96A] transition-colors">{product.name}</h3>
+        <div className="flex items-center justify-center gap-2">
+          <span className="text-base font-bold text-[#C8A96A]">{formatCurrency(product.price)}</span>
           {product.comparePrice && (
-            <span className="text-sm text-muted-foreground line-through">{formatCurrency(product.comparePrice)}</span>
+            <span className="text-sm text-[#F7F5F0]/40 line-through">{formatCurrency(product.comparePrice)}</span>
           )}
         </div>
       </div>
@@ -93,74 +65,96 @@ function ProductCard({ product }: { product: typeof PRODUCTS[0] }) {
 }
 
 export default function StorePage() {
-  const [category, setCategory] = useState('All');
-  const [sort, setSort] = useState('popular');
+  const [category, setCategory] = useState('الكل');
 
-  const filtered = category === 'All' ? PRODUCTS : PRODUCTS.filter(p => p.category === category);
+  const filtered = category === 'الكل' ? PRODUCTS : PRODUCTS.filter(p => p.category === category);
 
   return (
     <div>
-      {/* Hero */}
-      <section className="relative bg-gradient-to-br from-purple-950/50 via-background to-indigo-950/30 py-20 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl" />
+      {/* Hero Section */}
+      <section className="relative min-h-[85vh] flex items-center justify-center py-20 overflow-hidden">
+        {/* Deep dark background with geometric pattern and vignette */}
+        <div className="absolute inset-0 bg-[#0D0D0D] z-[-2]"></div>
+        <div className="absolute inset-0 bg-pattern-islamic opacity-20 z-[-1] animate-slow-pan"></div>
+        <div className="absolute inset-0 vignette-overlay z-0"></div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center mt-10">
+          {/* Main Arch Frame */}
+          <div className="relative inline-block mx-auto">
+            <div className="absolute inset-0 bg-[#C8A96A]/5 blur-3xl rounded-full"></div>
+            <div className="arch-container w-[280px] h-[380px] md:w-[350px] md:h-[480px] border border-[#C8A96A]/30 p-2 mx-auto relative flex flex-col items-center justify-center animate-fade-in bg-[#151515]/40 backdrop-blur-md">
+              <div className="arch-container w-full h-full border border-[#C8A96A]/10 flex flex-col items-center justify-center p-8 text-center bg-[#0D0D0D]/60">
+                <Leaf className="w-10 h-10 text-[#C8A96A] mb-8 animate-fade-up opacity-80" style={{ animationDelay: '0.2s' }} />
+                <h1 className="text-5xl md:text-7xl font-serif font-bold text-[#C8A96A] mb-4 animate-fade-up leading-tight" style={{ animationDelay: '0.4s' }}>
+                  إرث العافية
+                </h1>
+                <p className="text-sm md:text-base text-[#F7F5F0]/80 font-serif leading-relaxed animate-fade-up max-w-[200px]" style={{ animationDelay: '0.6s' }}>
+                  متجذرون في التراث، نصنع منتجاتنا بعناية لتجربة رفاهية حقيقية.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-12 animate-fade-up" style={{ animationDelay: '0.8s' }}>
+            <Link href="#collection" className="luxury-button-primary inline-flex text-sm">
+              اكتشف مجموعتنا
+            </Link>
+          </div>
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4 animate-fade-up">
-            Discover Your <span className="gradient-text">Glow</span>
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto animate-fade-up" style={{ animationDelay: '0.1s' }}>
-            Premium skincare crafted with the finest ingredients for radiant, healthy skin.
+      </section>
+
+      {/* Story Section */}
+      <section className="bg-[#151515] py-24 border-y border-[#C8A96A]/10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-pattern-islamic opacity-5 pointer-events-none"></div>
+        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+          <h2 className="text-3xl md:text-4xl font-serif text-[#C8A96A] mb-8">حكاية إرث</h2>
+          <p className="text-lg md:text-xl text-[#F7F5F0]/80 leading-relaxed font-serif max-w-2xl mx-auto">
+            من قلب المدينة المنورة، نستوحي قيمنا ومكوناتنا. نؤمن بأن العافية الحقيقية تبدأ من الطبيعة، لذلك ننتقي أفضل المحاصيل وأجود الخامات لنقدم لك تجربة تفوق الوصف، تمزج بين أصالة الماضي ورقي الحاضر.
           </p>
         </div>
       </section>
 
-      {/* Filters & Products */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+      {/* Products Collection */}
+      <section id="collection" className="max-w-7xl mx-auto px-4 sm:px-6 py-24">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#C8A96A] mb-4">المنتجات الفاخرة</h2>
+          <div className="w-24 h-0.5 bg-[#C8A96A]/30 mx-auto"></div>
+        </div>
+
         {/* Filter Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex justify-center mb-16">
+          <div className="flex items-center gap-4 flex-wrap justify-center bg-[#151515] p-2 rounded-full border border-[#C8A96A]/10 shadow-lg">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}
                 className={cn(
-                  'px-4 py-2 rounded-full text-sm font-medium transition-all border',
+                  'px-6 py-2.5 rounded-full text-sm font-serif transition-all duration-500',
                   category === cat
-                    ? 'bg-foreground text-background border-foreground'
-                    : 'border-border hover:bg-accent text-muted-foreground hover:text-foreground'
+                    ? 'bg-[#C8A96A] text-[#0D0D0D] font-bold shadow-[0_0_15px_rgba(200,169,106,0.2)]'
+                    : 'text-[#F7F5F0]/60 hover:text-[#C8A96A] hover:bg-[#C8A96A]/5'
                 )}
               >
                 {cat}
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-2">
-            <SlidersHorizontal className="w-4 h-4 text-muted-foreground" />
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="text-sm bg-transparent border-none outline-none cursor-pointer text-muted-foreground"
-            >
-              <option value="popular">Most Popular</option>
-              <option value="newest">Newest</option>
-              <option value="price-low">Price: Low → High</option>
-              <option value="price-high">Price: High → Low</option>
-              <option value="rating">Top Rated</option>
-            </select>
-          </div>
         </div>
 
-        <p className="text-sm text-muted-foreground mb-6">{filtered.length} products</p>
-
         {/* Product Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
           {filtered.map((product, i) => (
-            <div key={product.id} style={{ animationDelay: `${i * 0.05}s` }}>
+            <div key={product.id} style={{ animationDelay: `${i * 0.1}s` }}>
               <ProductCard product={product} />
             </div>
           ))}
+        </div>
+        
+        {/* View All Button */}
+        <div className="text-center mt-20">
+          <Link href="/store" className="luxury-button-outline inline-flex px-10 py-4 text-sm bg-[#151515]">
+            عرض جميع المنتجات
+          </Link>
         </div>
       </section>
     </div>

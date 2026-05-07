@@ -2,12 +2,14 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import { OrderStatus, Prisma } from '@prisma/client';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private prisma: PrismaService,
     private emailService: EmailService,
+    private eventEmitter: EventEmitter2
   ) {}
 
   private generateOrderNumber(): string {
@@ -48,7 +50,12 @@ export class OrdersService {
         skip,
         take: limit,
         include: {
-          items: { include: { product: { select: { name: true, coverImageUrl: true } }, variant: { select: { sku: true, name: true } } } },
+          items: {
+            include: {
+              product: { select: { name: true, coverImageUrl: true } },
+              variant: { select: { sku: true, name: true } },
+            },
+          },
           createdBy: { select: { name: true } },
           assignedTo: { select: { name: true } },
         },
@@ -68,8 +75,14 @@ export class OrdersService {
       where: { id },
       include: {
         items: { include: { product: true, variant: true } },
-        statusHistory: { orderBy: { createdAt: 'desc' }, include: { changedBy: { select: { name: true } } } },
-        orderNotes: { orderBy: { createdAt: 'desc' }, include: { author: { select: { name: true } } } },
+        statusHistory: {
+          orderBy: { createdAt: 'desc' },
+          include: { changedBy: { select: { name: true } } },
+        },
+        orderNotes: {
+          orderBy: { createdAt: 'desc' },
+          include: { author: { select: { name: true } } },
+        },
         shipments: { include: { events: { orderBy: { createdAt: 'desc' } } } },
         createdBy: { select: { name: true } },
         assignedTo: { select: { name: true } },
@@ -80,19 +93,22 @@ export class OrdersService {
     return order;
   }
 
-  async create(data: {
-    customerId?: string;
-    customerName: string;
-    customerPhone?: string;
-    customerEmail?: string;
-    shippingAddress?: string;
-    shippingCity?: string;
-    shippingCountry?: string;
-    paymentMethod?: string;
-    notes?: string;
-    promoCodeId?: string;
-    items: { productId: string; variantId: string; quantity: number; price: number }[];
-  }, createdById: string) {
+  async create(
+    data: {
+      customerId?: string;
+      customerName: string;
+      customerPhone?: string;
+      customerEmail?: string;
+      shippingAddress?: string;
+      shippingCity?: string;
+      shippingCountry?: string;
+      paymentMethod?: string;
+      notes?: string;
+      promoCodeId?: string;
+      items: { productId: string; variantId: string; quantity: number; price: number }[];
+    },
+    createdById: string
+  ) {
     // Generate unique order number using timestamp + random suffix (race-condition free)
     const orderNumber = `IRTH-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
@@ -167,14 +183,23 @@ export class OrdersService {
       });
     }
 
+    // Emit event for real-time update
+    this.eventEmitter.emit('order.created', order);
+
     // Send confirmation email
     if (data.customerEmail) {
-      this.emailService.sendOrderConfirmation(data.customerEmail, {
-        orderNumber,
-        customerName: data.customerName,
-        items: order.items.map((i: any) => ({ name: i.product.name, quantity: i.quantity, price: i.price })),
-        total,
-      }).catch(() => {}); // fire & forget
+      this.emailService
+        .sendOrderConfirmation(data.customerEmail, {
+          orderNumber,
+          customerName: data.customerName,
+          items: order.items.map((i: any) => ({
+            name: i.product.name,
+            quantity: i.quantity,
+            price: i.price,
+          })),
+          total,
+        })
+        .catch(() => {}); // fire & forget
     }
 
     return order;
@@ -201,7 +226,7 @@ export class OrdersService {
       throw new BadRequestException(`Cannot transition from ${order.status} to ${status}`);
     }
 
-// If cancelled or returned, restore stock
+    // If cancelled or returned, restore stock
     if (['CANCELLED', 'RETURNED'].includes(status)) {
       const items = await this.prisma.orderItem.findMany({ where: { orderId } });
       for (const item of items) {
@@ -225,16 +250,24 @@ export class OrdersService {
           },
         },
       },
-      include: { statusHistory: { orderBy: { createdAt: 'desc' } } },
+      include: {
+        statusHistory: { orderBy: { createdAt: 'desc' } },
+        items: { include: { product: true } },
+      },
     });
+
+    // Emit event for real-time update
+    this.eventEmitter.emit('order.updated', updated);
 
     // Send status update email
     if (order.customerEmail) {
-      this.emailService.sendOrderStatusUpdate(order.customerEmail, {
-        orderNumber: order.orderNumber,
-        customerName: order.customerName,
-        status,
-      }).catch(() => {}); // fire & forget
+      this.emailService
+        .sendOrderStatusUpdate(order.customerEmail, {
+          orderNumber: order.orderNumber,
+          customerName: order.customerName,
+          status,
+        })
+        .catch(() => {}); // fire & forget
     }
 
     return updated;

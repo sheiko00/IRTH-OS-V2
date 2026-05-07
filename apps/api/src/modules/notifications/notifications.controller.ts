@@ -9,7 +9,11 @@ export class NotificationsController {
   constructor(private notificationsService: NotificationsService) {}
 
   @Get()
-  findAll(@CurrentUser('sub') userId: string, @Query('page') page?: number, @Query('limit') limit?: number) {
+  findAll(
+    @CurrentUser('sub') userId: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number
+  ) {
     return this.notificationsService.getUserNotifications(userId, page, limit);
   }
 

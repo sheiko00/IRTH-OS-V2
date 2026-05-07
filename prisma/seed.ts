@@ -7,12 +7,12 @@ async function main() {
   console.log('🌱 Seeding IRTH OS database...');
 
   // ─── ROLES ────────────────────────────────────
-  const superAdminRole = await prisma.role.upsert({
-    where: { name: 'SUPER_ADMIN' },
+  const founderRole = await prisma.role.upsert({
+    where: { name: 'FOUNDER' },
     update: {},
     create: {
-      name: 'SUPER_ADMIN',
-      displayName: 'Super Admin',
+      name: 'FOUNDER',
+      displayName: 'الـمـؤسـس (Founder)',
       permissions: ['*'],
     },
   });
@@ -22,7 +22,7 @@ async function main() {
     update: {},
     create: {
       name: 'ADMIN',
-      displayName: 'Administrator',
+      displayName: 'مدير النظام (Administrator)',
       permissions: [
         'VIEW_USERS', 'CREATE_USER', 'EDIT_USER', 'MANAGE_ROLES',
         'VIEW_PRODUCTS', 'CREATE_PRODUCT', 'EDIT_PRODUCT', 'DELETE_PRODUCT',
@@ -38,28 +38,12 @@ async function main() {
     },
   });
 
-  const staffRole = await prisma.role.upsert({
-    where: { name: 'STAFF' },
+  const marketingStaffRole = await prisma.role.upsert({
+    where: { name: 'STAFF_MARKETING' },
     update: {},
     create: {
-      name: 'STAFF',
-      displayName: 'Staff Member',
-      permissions: [
-        'VIEW_PRODUCTS',
-        'VIEW_ORDERS', 'CREATE_ORDER', 'EDIT_ORDER',
-        'VIEW_SHIPPING',
-        'VIEW_FILES', 'UPLOAD_FILES',
-      ],
-      isDefault: true,
-    },
-  });
-
-  const marketingRole = await prisma.role.upsert({
-    where: { name: 'MARKETING' },
-    update: {},
-    create: {
-      name: 'MARKETING',
-      displayName: 'Marketing',
+      name: 'STAFF_MARKETING',
+      displayName: 'فريق التسويق (Marketing)',
       permissions: [
         'VIEW_PRODUCTS',
         'VIEW_MARKETING', 'CREATE_CAMPAIGN', 'EDIT_CAMPAIGN', 'MANAGE_COUPONS',
@@ -69,17 +53,70 @@ async function main() {
     },
   });
 
-  const operationsRole = await prisma.role.upsert({
-    where: { name: 'OPERATIONS' },
+  const operationsStaffRole = await prisma.role.upsert({
+    where: { name: 'STAFF_OPERATIONS' },
     update: {},
     create: {
-      name: 'OPERATIONS',
-      displayName: 'Operations',
+      name: 'STAFF_OPERATIONS',
+      displayName: 'فريق العمليات (Operations)',
       permissions: [
-        'VIEW_ORDERS', 'CREATE_ORDER', 'EDIT_ORDER', 'MANAGE_ORDER_STATUS',
+        'VIEW_ORDERS', 'EDIT_ORDER', 'MANAGE_ORDER_STATUS',
         'VIEW_SHIPPING', 'MANAGE_SHIPPING',
         'VIEW_INVENTORY', 'MANAGE_INVENTORY',
         'VIEW_SUPPLIERS',
+        'VIEW_FILES', 'UPLOAD_FILES',
+      ],
+    },
+  });
+
+  const financeStaffRole = await prisma.role.upsert({
+    where: { name: 'STAFF_FINANCE' },
+    update: {},
+    create: {
+      name: 'STAFF_FINANCE',
+      displayName: 'فريق المالية (Finance)',
+      permissions: [
+        'VIEW_ANALYTICS',
+        'VIEW_ORDERS',
+        'VIEW_SUPPLIERS',
+        'VIEW_EXPENSES', 'MANAGE_EXPENSES',
+      ],
+    },
+  });
+
+  const supplierRole = await prisma.role.upsert({
+    where: { name: 'SUPPLIER' },
+    update: {},
+    create: {
+      name: 'SUPPLIER',
+      displayName: 'مـورد (Supplier)',
+      permissions: [
+        'VIEW_OWN_BATCHES', 'MANAGE_OWN_BATCHES',
+        'UPLOAD_FILES', 'VIEW_FILES',
+      ],
+    },
+  });
+
+  const distributorRole = await prisma.role.upsert({
+    where: { name: 'DISTRIBUTOR' },
+    update: {},
+    create: {
+      name: 'DISTRIBUTOR',
+      displayName: 'مـوزع (Distributor)',
+      permissions: [
+        'VIEW_PRODUCTS', 'CREATE_B2B_ORDER', 'VIEW_OWN_ORDERS',
+      ],
+    },
+  });
+
+  const shippingPartnerRole = await prisma.role.upsert({
+    where: { name: 'SHIPPING_PARTNER' },
+    update: {},
+    create: {
+      name: 'SHIPPING_PARTNER',
+      displayName: 'شريك الشحن (Shipping Partner)',
+      permissions: [
+        'VIEW_ASSIGNED_SHIPMENTS', 'UPDATE_SHIPMENT_STATUS',
       ],
     },
   });
@@ -92,8 +129,8 @@ async function main() {
     create: {
       email: 'admin@irth.app',
       password: hashedPassword,
-      name: 'IRTH Admin',
-      roleId: superAdminRole.id,
+      name: 'Founder',
+      roleId: founderRole.id,
     },
   });
 

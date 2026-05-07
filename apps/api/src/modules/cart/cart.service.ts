@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -7,9 +7,15 @@ export class CartService {
 
   async getOrCreateCart(customerId?: string, sessionId?: string) {
     let cart = customerId
-      ? await this.prisma.cart.findUnique({ where: { customerId }, include: { items: { include: { product: true, variant: true } } } })
+      ? await this.prisma.cart.findUnique({
+          where: { customerId },
+          include: { items: { include: { product: true, variant: true } } },
+        })
       : sessionId
-        ? await this.prisma.cart.findUnique({ where: { sessionId }, include: { items: { include: { product: true, variant: true } } } })
+        ? await this.prisma.cart.findUnique({
+            where: { sessionId },
+            include: { items: { include: { product: true, variant: true } } },
+          })
         : null;
 
     if (!cart) {

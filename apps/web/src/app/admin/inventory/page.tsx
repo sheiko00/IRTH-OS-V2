@@ -1,168 +1,103 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { AlertTriangle, Package, Calendar, TrendingDown, Plus, Search } from 'lucide-react';
-import { cn, formatCurrency } from '@/lib/utils';
+import { useState } from 'react';
+import { Package, Search, Plus, Filter, AlertCircle, Layers } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { INVENTORY_DATA } from '@/components/inventory/inventory-dashboard-data';
+import { StockCard, InventoryAlert } from '@/components/inventory/inventory-dashboard-primitives';
+import { MetricSeal } from '@/components/founder/founder-dashboard-primitives';
 
 export default function InventoryPage() {
-  const [variants, setVariants] = useState<any[]>([]);
-  const [alerts, setAlerts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<'stock' | 'alerts' | 'expiring'>('stock');
-
-  useEffect(() => {
-    setTimeout(() => {
-      setVariants([
-        { id: '1', sku: 'RAD-SER-30ML', stockQuantity: 100, product: { name: 'Radiance Serum', coverImageUrl: '' }, reorderAlert: { minStock: 20 } },
-        { id: '2', sku: 'RAD-SER-50ML', stockQuantity: 50, product: { name: 'Radiance Serum' }, reorderAlert: { minStock: 15 } },
-        { id: '3', sku: 'HYD-CRM-50ML', stockQuantity: 75, product: { name: 'Hydra Moisturizer' }, reorderAlert: null },
-        { id: '4', sku: 'CLN-GEL-150ML', stockQuantity: 200, product: { name: 'Deep Cleansing Gel' }, reorderAlert: null },
-        { id: '5', sku: 'HGO-100ML', stockQuantity: 3, product: { name: 'Hair Growth Oil' }, reorderAlert: { minStock: 10 } },
-        { id: '6', sku: 'VCT-200ML', stockQuantity: 180, product: { name: 'Vitamin C Toner' }, reorderAlert: null },
-        { id: '7', sku: 'BLL-250ML', stockQuantity: 8, product: { name: 'Body Lotion Luxe' }, reorderAlert: { minStock: 20 } },
-      ]);
-      setAlerts([
-        { variant: { sku: 'HGO-100ML', stockQuantity: 3, product: { name: 'Hair Growth Oil' } }, minStock: 10 },
-        { variant: { sku: 'BLL-250ML', stockQuantity: 8, product: { name: 'Body Lotion Luxe' } }, minStock: 20 },
-      ]);
-      setLoading(false);
-    }, 400);
-  }, []);
-
-  const totalUnits = variants.reduce((s, v) => s + v.stockQuantity, 0);
-  const lowStockCount = variants.filter(v => v.reorderAlert && v.stockQuantity <= v.reorderAlert.minStock).length;
-
-  if (loading) return <div className="space-y-4">{[...Array(6)].map((_, i) => <div key={i} className="h-16 bg-muted rounded-xl animate-pulse" />)}</div>;
+  const [activeTab, setActiveTab] = useState('ALL');
+  const lowStockItems = INVENTORY_DATA.filter(item => item.status === 'LOW_STOCK');
 
   return (
-    <div className="space-y-6 animate-fade-up">
-      <div className="flex items-center justify-between">
+    <div className="space-y-10 font-serif animate-fade-in rtl" dir="rtl">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#C8A96A]/10 pb-8">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Inventory</h1>
-          <p className="text-muted-foreground">{totalUnits} total units across {variants.length} variants</p>
+          <h1 className="text-4xl font-bold tracking-tight text-[#F7F5F0] mb-2">إدارة المخزون والقطع</h1>
+          <p className="text-[#F7F5F0]/50 max-w-md">مراقبة مستويات المخزون اللحظية، تتبع دفعات الإنتاج، وضمان توفر المنتجات الأكثر مبيعاً.</p>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl gradient-primary hover:opacity-90 transition-all shadow-lg shadow-purple-500/25">
-          <Plus className="w-4 h-4" /> Add Batch
-        </button>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-5 rounded-2xl border border-border bg-card">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center">
-              <Package className="w-4 h-4 text-purple-500" />
-            </div>
-            <span className="text-sm text-muted-foreground">Total Stock</span>
+        <div className="flex items-center gap-4">
+          <div className="relative group">
+            <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#F7F5F0]/20 group-focus-within:text-[#C8A96A] transition-colors" />
+            <input 
+              type="text" 
+              placeholder="البحث عن منتج أو SKU..."
+              className="bg-[#151515] border border-[#C8A96A]/10 rounded-xl py-3 pr-12 pl-4 text-sm text-[#F7F5F0] focus:outline-none focus:border-[#C8A96A]/30 w-64 transition-all"
+            />
           </div>
-          <p className="text-2xl font-bold">{totalUnits}</p>
-        </div>
-        <div className="p-5 rounded-2xl border border-border bg-card">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center">
-              <TrendingDown className="w-4 h-4 text-red-500" />
-            </div>
-            <span className="text-sm text-muted-foreground">Low Stock Alerts</span>
-          </div>
-          <p className="text-2xl font-bold text-red-500">{lowStockCount}</p>
-        </div>
-        <div className="p-5 rounded-2xl border border-border bg-card">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center">
-              <Calendar className="w-4 h-4 text-amber-500" />
-            </div>
-            <span className="text-sm text-muted-foreground">Expiring Soon</span>
-          </div>
-          <p className="text-2xl font-bold text-amber-500">0</p>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-1 p-1 bg-muted/50 rounded-xl w-fit">
-        {(['stock', 'alerts', 'expiring'] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)}
-            className={cn('px-4 py-2 rounded-lg text-sm font-medium transition-all capitalize', tab === t ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground')}>
-            {t === 'alerts' ? `Alerts (${lowStockCount})` : t}
+          <button className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-[#0D0D0D] rounded-xl bg-[#C8A96A] hover:bg-[#B6975A] transition-all shadow-[0_0_20px_rgba(200,169,106,0.3)]">
+            <Plus className="w-4 h-4" /> إضافة دفعة إنتاج
           </button>
-        ))}
+        </div>
       </div>
 
-      {/* Stock Table */}
-      {tab === 'stock' && (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border bg-muted/30">
-                <th className="text-left text-xs font-semibold text-muted-foreground p-4">Product / SKU</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground p-4">Stock</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground p-4">Reorder Point</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground p-4">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {variants.map((v) => {
-                const isLow = v.reorderAlert && v.stockQuantity <= v.reorderAlert.minStock;
-                return (
-                  <tr key={v.id} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
-                    <td className="p-4">
-                      <p className="text-sm font-medium">{v.product.name}</p>
-                      <p className="text-xs text-muted-foreground font-mono">{v.sku}</p>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <span className={cn('text-sm font-bold', isLow ? 'text-red-500' : '')}>{v.stockQuantity}</span>
-                        <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
-                          <div
-                            className={cn('h-full rounded-full transition-all', isLow ? 'bg-red-500' : v.stockQuantity < 50 ? 'bg-amber-500' : 'bg-green-500')}
-                            style={{ width: `${Math.min(100, (v.stockQuantity / 200) * 100)}%` }}
-                          />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <span className="text-sm">{v.reorderAlert?.minStock || '—'}</span>
-                    </td>
-                    <td className="p-4">
-                      {isLow ? (
-                        <span className="flex items-center gap-1 text-xs font-semibold text-red-500"><AlertTriangle className="w-3 h-3" /> Low Stock</span>
-                      ) : (
-                        <span className="text-xs font-semibold text-green-500">In Stock</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {/* Inventory Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <MetricSeal metric={{ label: "إجمالي الوحدات", value: "١,٨٤٢", note: "تحديث مخزون اليوم", trend: "+٥٪", icon: Package, tone: "gold" }} />
+        <MetricSeal metric={{ label: "منتجات قاربت على النفاد", value: lowStockItems.length.toString(), note: "تحتاج إعادة توريد عاجلة", trend: "تنبيه", icon: AlertCircle, tone: "warm" }} />
+        <MetricSeal metric={{ label: "إجمالي قيمة المخزون", value: "٤٢٠,٠٠٠ ج.م", note: "القيمة التقديرية للسلع", trend: "مستقر", icon: Layers, tone: "gold" }} />
+        <MetricSeal metric={{ label: "معدل دوران المخزون", value: "٤.٢", note: "سرعة حركة المنتجات", trend: "+٠.٨", icon: Package, tone: "green" }} />
+      </div>
 
-      {/* Alerts Tab */}
-      {tab === 'alerts' && (
-        <div className="space-y-3">
-          {alerts.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">No alerts</div>
-          ) : alerts.map((alert, i) => (
-            <div key={i} className="p-4 rounded-xl border border-red-500/20 bg-red-500/5 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="w-5 h-5 text-red-500" />
-                <div>
-                  <p className="text-sm font-semibold">{alert.variant.product.name} ({alert.variant.sku})</p>
-                  <p className="text-xs text-muted-foreground">Current: {alert.variant.stockQuantity} / Min: {alert.minStock}</p>
-                </div>
-              </div>
-              <button className="px-4 py-2 text-xs font-semibold rounded-lg gradient-primary text-white">Reorder</button>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* Inventory Grid */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex gap-6">
+              {['ALL', 'IN_STOCK', 'LOW_STOCK', 'EXPIRING'].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={cn(
+                    "pb-2 text-sm font-bold transition-all border-b-2",
+                    activeTab === tab ? "text-[#C8A96A] border-[#C8A96A]" : "text-[#F7F5F0]/30 border-transparent hover:text-[#F7F5F0]/60"
+                  )}
+                >
+                  {tab === 'ALL' ? 'الكل' : tab === 'IN_STOCK' ? 'متوفر' : tab === 'LOW_STOCK' ? 'منخفض' : 'قريب الانتهاء'}
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+            <button className="p-2 rounded-lg bg-[#151515] border border-[#C8A96A]/10 text-[#F7F5F0]/40">
+              <Filter className="w-4 h-4" />
+            </button>
+          </div>
 
-      {tab === 'expiring' && (
-        <div className="text-center py-12 text-muted-foreground">
-          <Calendar className="w-10 h-10 mx-auto mb-3 opacity-50" />
-          <p className="text-sm">No batches expiring in the next 30 days</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {INVENTORY_DATA.map(item => (
+              <StockCard key={item.id} item={item} />
+            ))}
+          </div>
         </div>
-      )}
+
+        {/* Inventory Alerts & Intelligence */}
+        <div className="space-y-8">
+          <div>
+            <h3 className="text-xl font-bold text-[#F7F5F0] mb-6">تنبيهات فورية</h3>
+            <div className="space-y-4">
+              {lowStockItems.map(item => (
+                <InventoryAlert key={item.id} alert={item} />
+              ))}
+              {lowStockItems.length === 0 && (
+                <div className="p-10 rounded-3xl border border-dashed border-[#C8A96A]/10 flex flex-col items-center justify-center text-center">
+                  <Package className="w-10 h-10 text-[#F7F5F0]/10 mb-4" />
+                  <p className="text-sm text-[#F7F5F0]/30">لا توجد تنبيهات حالياً</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="p-8 rounded-[2.5rem] bg-gradient-to-br from-[#244F3A]/20 to-transparent border border-[#244F3A]/30">
+            <h3 className="text-lg font-bold text-[#A9D3B8] mb-2">توقع الطلب القادم</h3>
+            <p className="text-xs text-[#F7F5F0]/40 mb-6 leading-relaxed">بناءً على تحليلات الشهر الماضي، يتوقع زيادة في الطلب على "سيروم الإشراق" بنسبة ٢٠٪ خلال الأسبوعين القادمين.</p>
+            <button className="w-full py-4 rounded-2xl bg-[#244F3A] text-white font-bold hover:bg-[#1d3f2e] transition-all flex items-center justify-center gap-2">
+               طلب تصنيع استباقي <Package className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -49,21 +49,42 @@ export class RolesService {
   getAvailablePermissions() {
     return [
       // Users
-      'VIEW_USERS', 'CREATE_USER', 'EDIT_USER', 'DELETE_USER', 'MANAGE_ROLES',
+      'VIEW_USERS',
+      'CREATE_USER',
+      'EDIT_USER',
+      'DELETE_USER',
+      'MANAGE_ROLES',
       // Products
-      'VIEW_PRODUCTS', 'CREATE_PRODUCT', 'EDIT_PRODUCT', 'DELETE_PRODUCT',
+      'VIEW_PRODUCTS',
+      'CREATE_PRODUCT',
+      'EDIT_PRODUCT',
+      'DELETE_PRODUCT',
       // Orders
-      'VIEW_ORDERS', 'CREATE_ORDER', 'EDIT_ORDER', 'DELETE_ORDER', 'MANAGE_ORDER_STATUS',
+      'VIEW_ORDERS',
+      'CREATE_ORDER',
+      'EDIT_ORDER',
+      'DELETE_ORDER',
+      'MANAGE_ORDER_STATUS',
       // Suppliers
-      'VIEW_SUPPLIERS', 'CREATE_SUPPLIER', 'EDIT_SUPPLIER', 'DELETE_SUPPLIER',
+      'VIEW_SUPPLIERS',
+      'CREATE_SUPPLIER',
+      'EDIT_SUPPLIER',
+      'DELETE_SUPPLIER',
       // Inventory
-      'VIEW_INVENTORY', 'MANAGE_INVENTORY',
+      'VIEW_INVENTORY',
+      'MANAGE_INVENTORY',
       // Shipping
-      'VIEW_SHIPPING', 'MANAGE_SHIPPING',
+      'VIEW_SHIPPING',
+      'MANAGE_SHIPPING',
       // Marketing
-      'VIEW_MARKETING', 'CREATE_CAMPAIGN', 'EDIT_CAMPAIGN', 'MANAGE_COUPONS',
+      'VIEW_MARKETING',
+      'CREATE_CAMPAIGN',
+      'EDIT_CAMPAIGN',
+      'MANAGE_COUPONS',
       // Files
-      'VIEW_FILES', 'UPLOAD_FILES', 'DELETE_FILES',
+      'VIEW_FILES',
+      'UPLOAD_FILES',
+      'DELETE_FILES',
       // Analytics
       'VIEW_ANALYTICS',
       // Settings
