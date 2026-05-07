@@ -54,13 +54,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       )}>
         {/* Logo */}
         <div className={cn('flex items-center border-b border-[#C8A96A]/10 h-20 px-6', collapsed ? 'justify-center px-0' : 'gap-4')}>
-          <div className="w-10 h-10 rounded-full border border-[#C8A96A]/30 flex items-center justify-center flex-shrink-0 bg-[#0D0D0D]">
-            <span className="text-[#C8A96A] font-bold text-lg">إ</span>
-          </div>
-          {!collapsed && (
-            <div className="animate-fade-in flex-1">
-              <h1 className="text-xl font-bold tracking-wider text-[#C8A96A]">IRTH OS</h1>
-              <p className="text-[10px] text-[#F7F5F0]/50 tracking-widest uppercase mt-0.5">الإدارة العليا</p>
+          {collapsed ? (
+            <div className="relative w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-[#000000] border border-[#C8A96A]/20">
+              <img src="/irth-logo.jpg" alt="IRTH Logo" className="w-full h-full object-cover scale-150 mix-blend-screen translate-y-0.5" />
+            </div>
+          ) : (
+            <div className="animate-fade-in flex-1 flex items-center gap-3">
+              <div className="relative w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-[#000000] border border-[#C8A96A]/20">
+                <img src="/irth-logo.jpg" alt="IRTH Logo" className="w-full h-full object-cover scale-150 mix-blend-screen translate-y-0.5" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold tracking-wider text-[#C8A96A] font-serif">IRTH OS</h1>
+                <p className="text-[10px] text-[#F7F5F0]/50 tracking-widest uppercase mt-0.5">الإدارة العليا</p>
+              </div>
             </div>
           )}
           <button

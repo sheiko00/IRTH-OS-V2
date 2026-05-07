@@ -56,16 +56,16 @@ export default function LoginPage() {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 w-full max-w-md animate-fade-up">
+      <div className="relative z-10 w-full max-w-md animate-fade-up font-serif" dir="rtl">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-lg shadow-purple-500/25">
-              <Layers className="w-6 h-6 text-white" />
+          <Link href="/" className="inline-flex items-center gap-4 mb-6">
+            <div className="relative w-16 h-16 rounded-full overflow-hidden flex items-center justify-center bg-[#000000] shadow-[0_0_30px_rgba(200,169,106,0.3)] border border-[#C8A96A]/20">
+              <img src="/irth-logo.jpg" alt="IRTH Logo" className="w-full h-full object-cover scale-150 mix-blend-screen translate-y-1" />
             </div>
-            <span className="text-2xl font-bold tracking-tight">IRTH OS</span>
+            <span className="text-3xl font-bold tracking-widest text-[#C8A96A]">IRTH OS</span>
           </Link>
-          <p className="text-muted-foreground">Sign in to your dashboard</p>
+          <p className="text-[#F7F5F0]/60 text-sm">تسجيل الدخول إلى بوابة الوصول الآمنة</p>
         </div>
 
         {/* Form */}

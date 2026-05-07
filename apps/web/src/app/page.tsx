@@ -19,8 +19,8 @@ export default function HomePage() {
       <header className="relative z-10 border-b border-[#C8A96A]/10 bg-[#0D0D0D]/40 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full border border-[#C8A96A]/30 flex items-center justify-center bg-[#151515] shadow-[0_0_20px_rgba(200,169,106,0.2)]">
-              <span className="text-[#C8A96A] font-bold text-xl">إ</span>
+            <div className="relative w-14 h-14 rounded-full overflow-hidden flex items-center justify-center bg-[#000000] shadow-[0_0_20px_rgba(200,169,106,0.2)]">
+              <img src="/irth-logo.jpg" alt="IRTH Logo" className="w-full h-full object-cover scale-150 mix-blend-screen translate-y-1" />
             </div>
             <div>
               <h1 className="text-2xl font-bold tracking-widest text-[#C8A96A]">IRTH OS</h1>
