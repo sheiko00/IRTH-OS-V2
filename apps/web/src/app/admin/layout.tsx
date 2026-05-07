@@ -57,16 +57,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Logo */}
         <div className={cn('flex items-center border-b border-[#C8A96A]/10 h-20 px-6', collapsed ? 'justify-center px-0' : 'gap-4')}>
           {collapsed ? (
-            <div className="relative w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-[#000000] border border-[#C8A96A]/20">
-              <img src="/irth-logo.jpg" alt="IRTH Logo" className="w-full h-full object-cover scale-150 mix-blend-screen translate-y-0.5" />
+            <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-[#000] border border-[#C8A96A]/25 shadow-[0_0_12px_rgba(200,169,106,0.15)]">
+              <img src="/irth-logo-clean.png" alt="IRTH" className="w-full h-full object-contain p-0.5" />
             </div>
           ) : (
             <div className="animate-fade-in flex-1 flex items-center gap-3">
-              <div className="relative w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-[#000000] border border-[#C8A96A]/20">
-                <img src="/irth-logo.jpg" alt="IRTH Logo" className="w-full h-full object-cover scale-150 mix-blend-screen translate-y-0.5" />
+              <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-[#000] border border-[#C8A96A]/25 shadow-[0_0_16px_rgba(200,169,106,0.15)] flex-shrink-0">
+                <img src="/irth-logo-clean.png" alt="IRTH" className="w-full h-full object-contain p-0.5" />
               </div>
               <div>
-                <h1 className="text-xl font-bold tracking-wider text-[#C8A96A] font-serif">IRTH OS</h1>
+                <h1 className="text-lg font-bold tracking-wider text-[#C8A96A] font-serif">IRTH OS</h1>
                 <p className="text-[10px] text-[#F7F5F0]/50 tracking-widest uppercase mt-0.5">الإدارة العليا</p>
               </div>
             </div>

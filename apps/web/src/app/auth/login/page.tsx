@@ -60,10 +60,9 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-4 mb-6">
-            <div className="relative w-16 h-16 rounded-full overflow-hidden flex items-center justify-center bg-[#000000] shadow-[0_0_30px_rgba(200,169,106,0.3)] border border-[#C8A96A]/20">
-              <img src="/irth-logo.jpg" alt="IRTH Logo" className="w-full h-full object-cover scale-150 mix-blend-screen translate-y-1" />
+            <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-[#000] shadow-[0_0_40px_rgba(200,169,106,0.3)] border border-[#C8A96A]/25">
+              <img src="/irth-logo-full.png" alt="IRTH" className="w-full h-full object-contain p-1" />
             </div>
-            <span className="text-3xl font-bold tracking-widest text-[#C8A96A]">IRTH OS</span>
           </Link>
           <p className="text-[#F7F5F0]/60 text-sm">تسجيل الدخول إلى بوابة الوصول الآمنة</p>
         </div>
